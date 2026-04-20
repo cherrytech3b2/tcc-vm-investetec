@@ -10,7 +10,7 @@
   
   •Chave de Credenciais: Arquivo de configuração (JSON) necessário para autenticar a comunicação com o SDK.
   </p>
- <h1>Adicionar o SDK</h1>
+ <h1> Adicionar o SDK</h1>
 
 <p> Aqui será feita a instalação de bibliotecas para habilitar a comunicação entre o servidor e os serviços do Firebase.</p>
 
