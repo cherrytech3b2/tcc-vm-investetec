@@ -4,7 +4,7 @@ O Cloud Firestore é um banco de dados NoSQL focado em documentos que se diferen
 
 Cada documento funciona como um conjunto de pares chave-valor e pode abrigar desde tipos primitivos até estruturas complexas, como listas, objetos aninhados e subcoleções. Uma característica central do Firestore é a sua natureza implícita: a infraestrutura de coleções e documentos é criada automaticamente pelo banco no momento em que os dados são atribuídos, eliminando a necessidade de uma configuração prévia de esquema.
 
-# Documentos
+# Documentos:
 
 O documento é a unidade básica de armazenamento do Cloud Firestore, funcionando como um registro leve composto por campos mapeados a valores específicos. Cada um desses registros possui um nome exclusivo que o identifica dentro do banco de dados, como no exemplo de um perfil de usuário, onde as informações são estruturadas de forma direta e organizada.
 
@@ -15,7 +15,7 @@ No Cloud Firestore, estruturas de dados complexas ou aninhadas dentro de um docu
 <img width="247" height="177" alt="alovelace 2" src="https://github.com/user-attachments/assets/30075f62-e2f5-4d4f-b042-c6b33a762fc8" />
 Os documentos do Cloud Firestore funcionam essencialmente como registros JSON leves, compartilhando a mesma estrutura básica de organização de dados. As principais distinções residem no suporte a tipos de dados adicionais e na existência de um limite técnico de tamanho para cada documento, mas, na prática, eles podem ser manipulados e compreendidos como se fossem objetos JSON.
 
-# Coleções
+# Coleções:
 
 Os documentos no Cloud Firestore são organizados dentro de coleções, que funcionam como recipientes para agrupá-los. Um exemplo prático dessa estrutura é uma coleção chamada "users", criada especificamente para armazenar e organizar os diversos documentos que representam cada usuário individual do sistema.
 <img width="422" height="357" alt="Coleções" src="https://github.com/user-attachments/assets/eca76288-a63c-4df0-a573-b269a2eaaf95" />
@@ -26,7 +26,7 @@ O Cloud Firestore opera de forma independente de esquemas, oferecendo total libe
 
 Estruturalmente, uma coleção é composta exclusivamente por documentos, não podendo conter campos brutos ou outras coleções diretamente. Cada documento possui um nome único dentro de sua coleção, que pode ser definido pelo usuário ou gerado automaticamente pelo sistema. Além disso, a gestão de coleções é dinâmica: elas passam a existir assim que o primeiro documento é criado e desaparecem automaticamente quando o último documento é excluído.
 
-# Referências
+# Referências:
 
 No Cloud Firestore, a identificação de cada documento é determinada de forma única pela sua localização específica dentro da base de dados. Para interagir com um documento via código — como o exemplo do usuário alovelace dentro da coleção users — é necessário criar uma referência, que funciona como um apontador para esse endereço exato no banco de dados.
 
@@ -41,7 +41,7 @@ Para facilitar a programação, o Cloud Firestore permite criar referências a d
 <img width="720" height="103" alt="referências3" src="https://github.com/user-attachments/assets/52d488c4-3b8c-476c-b6ef-71651d0d9e7b" />
 
 
-# Dados hierárquicos
+# Dados hierárquicos:
 
 Para compreender a estrutura hierárquica do Cloud Firestore, pode-se utilizar o exemplo de um aplicativo de chat. Nesse cenário, o sistema organiza os dados criando uma coleção principal chamada rooms, que atua como o recipiente para armazenar as diferentes salas de conversa disponíveis, servindo de base para a construção dos níveis de dados subsequentes.
 
@@ -49,7 +49,7 @@ Para compreender a estrutura hierárquica do Cloud Firestore, pode-se utilizar o
 
 Ao planejar o armazenamento de mensagens em um app de chat, o Cloud Firestore recomenda não utilizá-las dentro do documento principal da sala, pois documentos devem permanecer leves e o volume de mensagens pode ser excessivo. A solução ideal é a utilização de subcoleções dentro do documento de cada sala, permitindo organizar grandes quantidades de dados de forma hierárquica sem sobrecarregar o registro principal.
 
-# Subcoleções
+# Subcoleções:
 
 No cenário de um aplicativo de chat, a estratégia mais eficiente é o uso de subcoleções, que são coleções diretamente vinculadas a um documento específico. Dessa forma, cada documento dentro da coleção principal rooms pode possuir sua própria subcoleção chamada messages, permitindo uma organização clara e isolada dos dados de cada sala.
 
