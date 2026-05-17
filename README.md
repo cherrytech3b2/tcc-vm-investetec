@@ -85,3 +85,15 @@ Estamos comprometidos com a **formação de profissionais** preparados para enfr
 <br>
 <img width="800" height="800" alt="WhatsApp Image 2026-04-18 at 12 02 57" src="https://github.com/user-attachments/assets/0f5006e9-b42b-476e-b281-7812a7729e2e" />
 <br>
+
+## Persona Ideais
+---
+<img width="3780" height="1890" alt="Amarelo Minimalista Mercadinho  Banner Médio (1)" src="https://github.com/user-attachments/assets/4804be4c-d36e-497e-9621-c01707c72fde" />
+<br\>
+<img width="3780" height="1890" alt="Amarelo Minimalista Mercadinho  Banner Médio (5)" src="https://github.com/user-attachments/assets/a3f5dbf6-c9a2-43f2-a8cb-34c88bd542c8" />
+<br\>
+<img width="3780" height="1890" alt="Amarelo Minimalista Mercadinho  Banner Médio" src="https://github.com/user-attachments/assets/234e7924-18ca-4602-b67e-9299e7c45d7c" />
+<br\>
+<img width="3780" height="1890" alt="Amarelo Minimalista Mercadinho  Banner Médio (7)" src="https://github.com/user-attachments/assets/26e1e77f-b6e4-4fab-acb6-2978acc072a8" />
+<br\>
+
