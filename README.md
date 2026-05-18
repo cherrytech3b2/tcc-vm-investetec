@@ -98,4 +98,6 @@ Estamos comprometidos com a **formação de profissionais** preparados para enfr
 <br\>
 <img width="3780" height="1890" alt="Amarelo Minimalista Mercadinho  Banner Médio" src="https://github.com/user-attachments/assets/84982df1-a2a2-457e-be1b-7ceb047094e8" />
 <br>
+<img width="3780" height="1890" alt="Amarelo Minimalista Mercadinho  Banner Médio" src="https://github.com/user-attachments/assets/d0ad4248-8443-41fb-9677-6c5e793b0360" />
+<br\>
 
