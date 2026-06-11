@@ -9,7 +9,7 @@
   <p>O diagnóstico apresentado busca evidenciar os principais obstáculos encontrados pelos estudantes durante a transição entre a formação técnica e o mercado, bem como demonstrar de que forma a proposta do InvestETEC pode contribuir para a superação desses desafios.</p>
 
 <br/>
-    <h2>2. Definição do Problema</h2>
+    <h2> 2. Definição do Problema </h2>
 
 <p>Verifica-se, atualmente, uma expressiva produção de projetos inovadores por parte dos estudantes durante a formação técnica. Contudo, constata-se um problema crítico após a conclusão do curso: a falta de visibilidade no mercado, a ausência de apoio financeiro e a limitação de redes de contato (networking) com empresas e investidores inviabilizam a continuidade dessas iniciativas.</p>
 
