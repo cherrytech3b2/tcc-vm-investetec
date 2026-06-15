@@ -1,0 +1,139 @@
+/* Definições Gerais e Cores Base */
+:root {
+    --primary-orange: #ff6600;
+    --dark-orange: #e65c00;
+    --bg-footer: #f5eae1;
+    --text-dark: #1a1a1a;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-dark);
+    overflow-x: hidden;
+}
+
+/* Utilitários Customizados */
+.custom-orange-text {
+    color: var(--primary-orange);
+}
+.text-orange {
+    color: var(--primary-orange) !important;
+}
+.text-orange-footer {
+    color: #e28743;
+}
+
+/* Customização de Botões */
+.btn-orange {
+    background-color: var(--primary-orange);
+    color: white;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+.btn-orange:hover {
+    background-color: var(--dark-orange);
+    color: white;
+}
+.btn-light-custom {
+    background-color: #ffeae0;
+    color: var(--primary-orange);
+    border: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+.btn-light-custom:hover {
+    background-color: white;
+    color: var(--dark-orange);
+}
+
+/* TELA 1: Hero Section com Fundo Laranja */
+.hero-section {
+    background: linear-gradient(135deg, #ff7300 0%, #ff4500 100%);
+    min-height: 80vh;
+    padding: 80px 0;
+    position: relative;
+}
+
+/* TELA 2: Cards com Sombra Suave */
+.custom-card {
+    border: none !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+}
+.custom-card:hover {
+    transform: translateY(-5px);
+}
+.card-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #fff0e6;
+    color: var(--primary-orange);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+/* Números de Impacto */
+.counter-number {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--primary-orange);
+}
+.border-end-custom {
+    border-right: 1px solid #e0e0e0;
+}
+@media (max-width: 768px) {
+    .border-end-custom {
+        border-right: none;
+    }
+}
+
+/* TELA 3: Círculos do 'Como Funciona' */
+.step-circle {
+    width: 140px;
+    height: 140px;
+    background-color: #fff0e6;
+    border: 1px solid #ffb380;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    color: var(--primary-orange);
+}
+
+/* Banner de Chamada para Ação (CTA) */
+.cta-banner {
+    background: linear-gradient(90deg, #ff6600 0%, #ff4500 100%);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(255, 70, 0, 0.2);
+}
+
+/* TELA 4: Rodapé Customizado */
+.custom-footer {
+    background-color: var(--bg-footer);
+}
+.footer-links li {
+    margin-bottom: 10px;
+}
+.footer-links a {
+    color: #555;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+}
+.footer-links a:hover {
+    color: var(--primary-orange);
+}
+.footer-social a {
+    font-size: 20px;
+    color: #e28743;
+    transition: color 0.2s ease;
+}
+.footer-social a:hover {
+    color: var(--primary-orange);
+}
