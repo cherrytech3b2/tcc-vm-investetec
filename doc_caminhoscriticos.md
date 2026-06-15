@@ -146,3 +146,7 @@
    <p>O InvestETEC busca atender a essa demanda por meio de uma plataforma digital que funcione simultaneamente como vitrine de talentos, repositório de projetos, espaço de divulgação de iniciativas tecnológicas e canal de aproximação entre a instituição e o setor empresarial.</p>
    <p>Dessa forma, espera-se contribuir para a valorização da produção tecnológica da ETEC Sylvio de Mattos Carvalho, ampliar as oportunidades de desenvolvimento profissional dos estudantes e incentivar a transformação de projetos acadêmicos em soluções reais para a sociedade, fortalecendo o papel da educação técnica como agente de inovação e desenvolvimento econômico.</p>
 <h1></h1>
+
+<H1>Exemplo Prático destes Conceitos</H1>
+<img width="1536" height="1024" alt="ChatGPT Image 15 de jun  de 2026, 11_35_57" src="https://github.com/user-attachments/assets/783486f4-2a3c-4fa8-8c4a-2958839dc688" />
+
