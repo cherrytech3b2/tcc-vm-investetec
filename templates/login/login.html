@@ -1,57 +1,243 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>InvestETEC</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <title>InvestETEC - Login</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  
+  <style>
+    /* Estilização Geral e Fundo Laranja com Degradê e Efeitos */
+    body {
+      background: radial-gradient(circle at top left, #ff8c42, #ff6200);
+      background-color: #ff6a00;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #ffffff;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Detalhes abstratos de fundo para imitar a imagem */
+    body::before, body::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      z-index: 0;
+    }
+    body::before { width: 400px; height: 400px; top: -100px; left: -100px; }
+    body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
+
+    .container {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Lado Esquerdo - Textos e Informações */
+    .brand-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+    }
+    .brand-title span {
+      color: #e2ff00; 
+    }
+    .brand-subtitle {
+      font-size: 1.8rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+    .brand-description {
+      font-size: 1rem;
+      opacity: 0.9;
+      max-width: 500px;
+      margin-bottom: 3rem;
+    }
+
+    /* Recursos/Destaques inferiores */
+    .feature-box {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .feature-icon {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+    .feature-text h5 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .feature-text p {
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    /* Lado Direito - Card de Login */
+    .login-card {
+      background: #ffffff;
+      color: #333333;
+      border-radius: 15px;
+      padding: 2.5rem 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    /* Configurações da imagem da logo */
+    .logo-img {
+      display: block;
+      margin: 0 auto 1.5rem auto; /* Centraliza horizontalmente */
+      object-fit: cover;
+      border-radius: 50%; /* Mantém o formato perfeitamente redondo */ 
+    }
+
+    .login-card h4 {
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 0.2rem;
+    }
+    .login-card .subtitle {
+      font-size: 0.85rem;
+      color: #888888;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    /* Formulários e Botões */
+    .form-label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #444444;
+      margin-bottom: 0.4rem;
+    }
+    .form-control {
+      border: 1px solid #cccccc;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+    }
+    .form-control::placeholder {
+      color: #bbbbbb;
+    }
+    .btn-submit {
+      background-color: #e67e22;
+      color: white;
+      border: none;
+      padding: 0.7rem;
+      font-weight: 600;
+      border-radius: 8px;
+      width: 100%;
+      margin-top: 1.5rem;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover {
+      background-color: #d35400;
+      color: white;
+    }
+    
+    /* Link de Cadastro */
+    .register-text {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #555555;
+    }
+    .register-text a {
+      color: #ff6a00;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .register-text a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 
 <body>
-  <header>
 
-  </header>
-  <main>
-    <section name="grid-login">
-      <div class="container text-center">
-        <div class="row">
-          <div class="col-sm"></div>
-          <div class="col-sm">
-            <form>
-              <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label">Entre com seu e-mail:</label>
-                <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                <div id="emailHelp" class="form-text">Não compartilhe seu e-mail com ninguém.</div>
+  <main class="container">
+    <div class="row align-items-center gy-5">
+      
+      <div class="col-lg-7 text-start">
+        <h1 class="brand-title">Invest<span style="color: #e2ff00;">Etec</span></h1>
+        <h2 class="brand-subtitle">Conectando talentos a oportunidades</h2>
+        <p class="brand-description">
+          O InvestEtec é a plataforma onde projetos acadêmicos ganham visibilidade. 
+          Encontre a solução que você precisa ou o estagiário que sua empresa procura, tudo em um só lugar.
+        </p>
+
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="feature-box">
+              <div class="feature-icon">
+                <i class="bi bi-people-fill"></i>
               </div>
-              <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Entre com sua senha:</label>
-                <input type="password" class="form-control" id="exampleInputPassword1">
+              <div class="feature-text">
+                <h5>Talento Jovem</h5>
+                <p>Projetos desenvolvidos por alunos da ETEC</p>
               </div>
-              <div class="mb-3 form-check">
-                <input type="checkbox" class="form-check-input" id="exampleCheck1">
-                <label class="form-check-label" for="exampleCheck1">Lembre-se de mim</label>
-              </div>
-              <button type="submit" class="btn btn-primary">Entrar</button>
-            </form>
+            </div>
           </div>
-          <div class="col-sm"></div>
+          
+          <div class="col-md-6">
+            <div class="feature-box">
+              <div class="feature-icon">
+                <i class="bi bi-globe"></i>
+              </div>
+              <div class="feature-text">
+                <h5>Oportunidades Reais</h5>
+                <p>Empresas investem inovações</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
+
+      <div class="col-lg-5">
+        <div class="login-card">
+          
+          <img src="{{url_for('static', filename='logo.jpeg')}}" alt="logo" width="200" height="200" class="logo-img">
+
+          <h4>Bem-Vindo!</h4>
+          <p class="subtitle">Faça login para continuar</p>
+
+          <form>
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" class="form-control" id="email" placeholder="seu@gmail.com" required>
+            </div>
+            
+            <div class="mb-3">
+              <label for="senha" class="form-label">Senha</label>
+              <input type="password" class="form-control" id="senha" required>
+            </div>
+
+            <button type="submit" class="btn btn-submit">Entrar</button>
+          </form>
+
+          <div class="register-text">
+            Não tem uma conta? <a href="#">Criar conta</a>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
   </main>
-  <footer>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-      crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
-      integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
-      crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-      crossorigin="anonymous"></script>
-  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
