@@ -1,5 +1,4 @@
 
-/* Estilização Geral e Fundo Laranja com Degradê e Efeitos */
 body {
   background: radial-gradient(circle at top left, #ff8c42, #ff6200);
   background-color: #ff6a00;
@@ -12,7 +11,6 @@ body {
   overflow-x: hidden;
 }
 
-/* Detalhes abstratos de fundo para imitar a imagem */
 body::before, body::after {
   content: "";
   position: absolute;
@@ -28,7 +26,6 @@ body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
   z-index: 1;
 }
 
-/* Lado Esquerdo - Textos e Informações */
 .brand-title {
   font-size: 3.5rem;
   font-weight: 800;
@@ -48,7 +45,7 @@ body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
   margin-bottom: 3rem;
 }
 
-/* Recursos/Destaques inferiores */
+
 .feature-box {
   display: flex;
   align-items: center;
@@ -75,7 +72,7 @@ body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
   opacity: 0.8;
 }
 
-/* Lado Direito - Card de Login */
+
 .login-card {
   background: #ffffff;
   color: #333333;
@@ -86,12 +83,11 @@ body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
   margin: 0 auto;
 }
 
-/* Configurações da imagem da logo */
 .logo-img {
   display: block;
-  margin: 0 auto 1.5rem auto; /* Centraliza horizontalmente */
+  margin: 0 auto 1.5rem auto; 
   object-fit: cover;
-  border-radius: 50%; /* Mantém o formato perfeitamente redondo */ 
+  border-radius: 50%; 
 }
 
 .login-card h4 {
@@ -106,7 +102,6 @@ body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
   margin-bottom: 2rem;
 }
 
-/* Formulários e Botões */
 .form-label {
   font-weight: 600;
   font-size: 0.9rem;
@@ -137,7 +132,6 @@ body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
   color: white;
 }
 
-/* Link de Cadastro */
 .register-text {
   text-align: center;
   margin-top: 1.5rem;
