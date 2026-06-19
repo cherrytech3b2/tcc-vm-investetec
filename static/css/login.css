@@ -44,8 +44,6 @@ body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
   max-width: 500px;
   margin-bottom: 3rem;
 }
-
-
 .feature-box {
   display: flex;
   align-items: center;
@@ -72,7 +70,6 @@ body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
   opacity: 0.8;
 }
 
-
 .login-card {
   background: #ffffff;
   color: #333333;
@@ -82,6 +79,7 @@ body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
   max-width: 400px;
   margin: 0 auto;
 }
+
 
 .logo-img {
   display: block;
@@ -101,6 +99,7 @@ body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
   text-align: center;
   margin-bottom: 2rem;
 }
+
 
 .form-label {
   font-weight: 600;
@@ -146,3 +145,4 @@ body::after { width: 300px; height: 300px; bottom: -50px; right: 10%; }
 .register-text a:hover {
   text-decoration: underline;
 }
+
