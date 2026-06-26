@@ -6,11 +6,9 @@
   <title>InvestETEC</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-
   <header>
     <nav class="navbar navbar-expand-lg custom-navbar">
       <div class="container">
@@ -18,7 +16,7 @@
           <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="logo" class="brand-logo">
           <span class="brand-title">Invest<span class="custom-orange-text">ETEC</span></span>
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-target="#navbarNav" data-bs-toggle="collapse" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse custom-menu" id="navbarNav">
@@ -92,7 +90,7 @@
             </div>
             <div class="col-6 col-md-3 border-end-custom">
               <span class="counter-number">+200</span>
-              <p class="counter-label">Empresas parceiras</p>
+              <p class="counter-label">Empresas substituídas</p>
             </div>
             <div class="col-6 col-md-3 border-end-custom">
               <span class="counter-number">+1000</span>
@@ -127,6 +125,73 @@
             <p class="step-text">Inicie conversas online com ideias que transformam projetos em grandes parcerias.</p>
           </div>
         </div>
+
+        <section class="news-section">
+          <h2 class="section-title-custom text-center mb-4">Feed de Notícias Tecnológicas</h2>
+          <div id="newsCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <div class="news-card-carousel text-center p-5">
+                  <h4>Transformação Digital no Ensino Técnico</h4>
+                  <p>Como o uso de frameworks modernos como React e Node.js prepara alunos da ETEC diretamente para atender as demandas atuais do mercado global.</p>
+                  <a href="#" class="btn-orange btn-sm mt-2">Ler Notícia Completa</a>
+                </div>
+              </div>
+              <div class="carousel-item">
+                <div class="news-card-carousel text-center p-5">
+                  <h4>O Fim dos Projetos de Gaveta</h4>
+                  <p>Iniciativas digitais ganham força para transformar monografias e protótipos escolares de fim de curso em startups viáveis economicamente.</p>
+                  <a href="#" class="btn-orange btn-sm mt-2">Ler Notícia Completa</a>
+                </div>
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Anterior</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Próximo</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="faq-section my-5">
+          <h2 class="section-title-custom text-center mb-4">Perguntas Frequentes (FAQ)</h2>
+          <div class="accordion" id="faqAccordion">
+            <div class="accordion-item custom-faq-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                  Qual é o objetivo principal do InvestETEC?
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  O InvestETEC serve para combater o "problema da gaveta", onde excelentes projetos técnicos acabam esquecidos após a formatura. Funcionamos como uma vitrine digital para conectar o talento dos alunos ao mercado de trabalho e potenciais investidores.
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item custom-faq-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Quais são os benefícios para as empresas parceiras?
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  As empresas ganham um canal de acesso facilitado a novas soluções técnicas criadas dentro do ambiente escolar, além de conseguirem identificar e recrutar novos talentos de forma precoce e assertiva.
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="location-section my-5">
+          <h2 class="section-title-custom text-center mb-4">Onde Estamos Localizados</h2>
+          <div class="map-container shadow-sm rounded">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3701.3734685375533!2d-48.3653131!3d-21.6103657!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94b91e2b6dbdf1b3%3A0x6bda19a9ebef6c98!2sRua%20Ces%C3%A1rio%20Mota%2C%20644%20-%20Centro%2C%20Mat%C3%A3o%20-%20SP%2C%2015990-050!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </section>
 
         <div class="cta-banner">
           <div class="row cta-banner-row">
@@ -163,7 +228,7 @@
         <div class="col-6 col-lg-2">
           <h5 class="footer-section-title">Navegação</h5>
           <ul class="footer-links">
-            <li><a href="#">Início</a></li>
+            <li><a href="#">Inicio</a></li>
             <li><a href="#">Sobre nós</a></li>
             <li><a href="#">Para alunos</a></li>
             <li><a href="#">Para empresas</a></li>
@@ -175,7 +240,7 @@
           <ul class="footer-links">
             <li><a href="#">Central de ajuda</a></li>
             <li><a href="#">Termos de uso</a></li>
-            <li><a href="#">Política de privacidade</a></li>
+            <li><a href="#">Politica de privacidade</a></li>
           </ul>
         </div>
         <div class="col-lg-3">
@@ -183,7 +248,7 @@
           <ul class="footer-info">
             <li><i class="fa-regular fa-envelope"></i> contato@investetec.com.br</li>
             <li><i class="fa-solid fa-phone"></i> (16) 99999-9999</li>
-            <li><i class="fa-solid fa-location-dot"></i> São Paulo - SP</li>
+            <li><i class="fa-solid fa-location-dot"></i> Matão - SP</li>
           </ul>
         </div>
       </div>
