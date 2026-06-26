@@ -1,7 +1,8 @@
 :root {
-    --cor-principal: #e28743;
+    --cor-principal: #ff6600;
     --cor-principal-escura: #b14700;
     --cor-fundo-footer: #f5eae1;
+    --cor-fundo-light: #fff0e6;
     --cor-texto: #1a1a1a;
     --cor-texto-secundario: #6c757d;
 }
@@ -13,7 +14,7 @@ body {
 }
 
 .texto-destaque {
-    color: var(--cor-principal);;
+    color: var(--cor-principal);
 }
 
 .text-orange {
@@ -31,7 +32,7 @@ body {
     left: 0;
     right: 0;
     z-index: 1030;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .custom-brand {
@@ -43,12 +44,12 @@ body {
 .brand-logo {
     width: 50px;
     height: 50px;
-    margin-right: 0.5rem;
+    margin-right: 8px;
 }
 
 .brand-title {
     font-weight: 700;
-    color: var(--text-dark);
+    color: var(--cor-texto);
 }
 
 .custom-menu {
@@ -64,7 +65,7 @@ body {
 }
 
 .custom-nav-list .nav-link {
-    padding: 0.5rem 1rem;
+    padding: 8px 16px;
     color: var(--cor-texto-secundario);
     text-decoration: none;
 }
@@ -75,7 +76,7 @@ body {
 
 @media (min-width: 992px) {
     .custom-nav-btn-item {
-        margin-left: 1rem;
+        margin-left: 16px;
     }
 }
 
@@ -85,9 +86,9 @@ body {
     color: #ffffff;
     border-radius: 8px;
     font-weight: 500;
-    padding: 6px 24px;
+    padding: 8px 24px;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: 0.3s;
     border: none;
 }
 
@@ -105,12 +106,12 @@ body {
     padding: 8px 24px;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: 0.3s;
 }
 
 .btn-light-custom:hover {
     background-color: #ffffff;
-    color: var(--dark-orange);
+    color: var(--cor-principal-escura);
 }
 
 .btn-outline-light-custom {
@@ -122,7 +123,7 @@ body {
     padding: 8px 24px;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: 0.3s;
 }
 
 .btn-outline-light-custom:hover {
@@ -146,31 +147,31 @@ body {
 .hero-title {
     font-size: 3.5rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 16px;
 }
 
 .hero-highlight {
-    color: var(--cor-principal);
+    color: #ffffff;
 }
 
 .hero-text {
     font-size: 1.25rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
     opacity: 0.9;
 }
 
 .hero-buttons {
     display: flex;
-    gap: 1rem;
+    gap: 16px;
 }
 
 .pillars-section {
-    padding: 3rem 0;
+    padding: 48px 0;
     background-color: #f8f9fa;
 }
 
 .pillars-row {
-    margin-bottom: 3rem;
+    margin-bottom: 48px;
     text-align: center;
 }
 
@@ -178,8 +179,8 @@ body {
     border: none;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease;
-    padding: 1.5rem;
+    transition: 0.3s;
+    padding: 24px;
     height: 100%;
     background-color: #ffffff;
 }
@@ -191,20 +192,20 @@ body {
 .card-icon {
     width: 60px;
     height: 60px;
-    background-color: #fff0e6;
+    background-color: var(--cor-fundo-light);
     color: var(--cor-principal);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 24px;
-    margin: 0 auto 1rem auto;
+    margin: 0 auto 16px auto;
 }
 
 .card-title {
     font-weight: 700;
     font-size: 1rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
     color: var(--cor-texto);
 }
 
@@ -216,12 +217,12 @@ body {
 
 .counter-box {
     text-align: center;
-    padding-top: 1.5rem;
+    padding-top: 24px;
 }
 
 .counter-box-title {
     font-weight: 700;
-    margin-bottom: 3rem;
+    margin-bottom: 48px;
 }
 
 .counter-row {
@@ -238,7 +239,7 @@ body {
 .counter-label {
     font-weight: 700;
     color: var(--cor-texto-secundario);
-    margin-top: 0.5rem;
+    margin-top: 8px;
     margin-bottom: 0;
 }
 
@@ -253,30 +254,30 @@ body {
 }
 
 .workflow-section {
-    padding: 3rem 0;
+    padding: 48px 0;
     background-color: #ffffff;
 }
 
 .workflow-title {
     text-align: center;
     font-weight: 700;
-    margin-bottom: 3rem;
+    margin-bottom: 48px;
     font-size: 2rem;
 }
 
 .workflow-row {
-    margin-bottom: 3rem;
+    margin-bottom: 48px;
 }
 
 .workflow-col {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
 }
 
 .step-circle {
     width: 140px;
     height: 140px;
-    background-color: #fff0e6;
+    background-color: var(--cor-fundo-light);
     border: 1px solid #ffb380;
     border-radius: 50%;
     display: flex;
@@ -284,18 +285,18 @@ body {
     justify-content: center;
     font-size: 40px;
     color: var(--cor-principal);
-    margin: 0 auto 1rem auto;
+    margin: 0 auto 16px auto;
 }
 
 .step-title {
     font-weight: 700;
     font-size: 1.25rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
 }
 
 .step-text {
     color: var(--cor-texto-secundario);
-    padding: 0 1rem;
+    padding: 0 16px;
     margin-bottom: 0;
 }
 
@@ -303,8 +304,8 @@ body {
     background: linear-gradient(90deg, #ff6600 0%, #ff4500 100%);
     border-radius: 16px;
     box-shadow: 0 10px 25px rgba(255, 70, 0, 0.2);
-    padding: 3rem;
-    margin-top: 3rem;
+    padding: 48px;
+    margin-top: 48px;
     color: #ffffff;
 }
 
@@ -318,7 +319,7 @@ body {
 
 .cta-title {
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
 }
 
 .cta-text {
@@ -328,7 +329,7 @@ body {
 
 .cta-buttons-container {
     display: flex;
-    gap: 1rem;
+    gap: 16px;
     justify-content: flex-start;
 }
 
@@ -340,19 +341,19 @@ body {
 
 .custom-footer {
     background-color: var(--cor-fundo-footer);
-    padding: 3rem 0;
+    padding: 48px 0;
 }
 
 .footer-logo-block {
     display: flex;
     align-items: center;
-    margin-bottom: 1rem;
+    margin-bottom: 16px;
 }
 
 .footer-logo-img {
     width: 40px;
     height: 40px;
-    margin-right: 0.5rem;
+    margin-right: 8px;
 }
 
 .footer-logo-title {
@@ -366,18 +367,18 @@ body {
     color: var(--cor-texto-secundario);
     font-size: 0.875rem;
     max-width: 280px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 24px;
 }
 
 .footer-social {
     display: flex;
-    gap: 1rem;
+    gap: 16px;
 }
 
 .footer-social a {
     font-size: 20px;
     color: var(--cor-principal);
-    transition: color 0.2s ease;
+    transition: 0.2s;
 }
 
 .footer-social a:hover {
@@ -388,7 +389,7 @@ body {
     font-weight: 700;
     color: var(--cor-texto);
     font-size: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 16px;
 }
 
 .footer-links {
@@ -402,10 +403,10 @@ body {
 }
 
 .footer-links a {
-    color: #555;
+    color: #555555;
     text-decoration: none;
     font-size: 14px;
-    transition: color 0.2s ease;
+    transition: 0.2s;
 }
 
 .footer-links a:hover {
@@ -425,11 +426,11 @@ body {
 }
 
 .footer-info i {
-    margin-right: 0.5rem;
+    margin-right: 8px;
     color: var(--cor-texto);
 }
-@media (max-width: 768px) {
 
+@media (max-width: 768px) {
     .hero-title {
         font-size: 2.5rem;
     }
