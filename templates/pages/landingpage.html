@@ -1,32 +1,385 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
 
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>InvestETEC</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    :root {
+      --primary-orange: #f95400;
+      --orange-gradient: linear-gradient(135deg, #ff6b00 0%, #f95400 100%);
+      --bg-cream: #f8f4ee;
+    }
+
+    body {
+      background-color: #fcfcfc;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: var(--bg-cream);
+      padding: 0.6rem 2rem;
+    }
+
+    .nav-link {
+      color: #6c757d;
+      font-weight: 500;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: #000000;
+    }
+
+    /* Banner Principal (Hero Compacto) */
+    .hero-section {
+      background: var(--orange-gradient);
+      padding: 2.5rem 1.5rem;
+      border-radius: 0 0 20px 20px;
+      color: #ffffff;
+    }
+
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    /* Botões personalizados */
+    .btn-orange {
+      background-color: var(--primary-orange);
+      color: #ffffff;
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 0.4rem 1.2rem;
+    }
+
+    .btn-orange:hover {
+      background-color: #e04b00;
+      color: #ffffff;
+    }
+
+    .btn-white {
+      background-color: #ffffff;
+      color: var(--primary-orange);
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 0.5rem 1.2rem;
+      border: none;
+    }
+
+    .btn-white:hover {
+      background-color: #f1f1f1;
+      color: var(--primary-orange);
+    }
+
+    .btn-outline-white {
+      border: 2px solid #ffffff;
+      color: #ffffff;
+      font-weight: bold;
+      border-radius: 8px;
+      padding: 0.5rem 1.2rem;
+    }
+
+    .btn-outline-white:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+
+    /* Cards de Destaque / Talentos */
+    .feature-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 1.5rem 1.2rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+      border: 1px solid #f0f0f0;
+      height: 100%;
+      transition: transform 0.2s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .icon-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid #f95400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: var(--primary-orange);
+      font-size: 1.4rem;
+    }
+
+    .step-circle {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #ffece2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.2rem;
+      color: var(--primary-orange);
+      font-size: 2rem;
+    }
+
+    /* Seção de Números */
+    .stats-section {
+      padding: 2.5rem 0;
+    }
+
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary-orange);
+    }
+
+    /* FAQ */
+    .accordion-item {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px !important;
+      overflow: hidden;
+      margin-bottom: 0.8rem;
+    }
+
+    .accordion-button {
+      font-weight: 600;
+      color: #333333;
+      background-color: #ffffff;
+      padding: 1rem 1.25rem;
+    }
+
+    .accordion-button:not(.collapsed) {
+      background-color: #fff4ed;
+      color: var(--primary-orange);
+      box-shadow: none;
+    }
+
+    .accordion-button:focus {
+      box-shadow: none;
+    }
+
+    /* Banner Inferior */
+    .footer-cta {
+      background: var(--orange-gradient);
+      border-radius: 16px;
+      padding: 1.8rem 2rem;
+      color: #ffffff;
+    }
+
+    /* Container do Mapa */
+    .map-container {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+      border: 1px solid #e0e0e0;
+    }
+  </style>
 </head>
 
 <body>
-  <header>
 
-  </header>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo" width="36" height="36" class="rounded-circle me-2">
+        <span class="fw-bold fs-5">Invest<span style="color: var(--primary-orange);">ETEC</span></span>
+      </a>
+
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <a class="nav-link active" href="#">Início</a>
+        <a class="nav-link" href="#">Sobre nós</a>
+        <a class="nav-link" href="#">Para alunos</a>
+        <a class="nav-link" href="#">Para empresas</a>
+        <a href="{{ url_for('login') }}" class="btn btn-orange text-decoration-none">Entrar</a>
+      </div>
+    </div>
+  </nav>
+
   <main>
+    <section class="hero-section container-fluid">
+      <div class="container py-2">
+        <div class="row align-items-center">
+          <div class="col-lg-8">
+            <h1 class="hero-title mb-2">Conectamos talentos<br>a oportunidades reais</h1>
+            <p class="fs-6 opacity-90 mb-3" style="max-width: 600px;">
+              O InvestETEC é a plataforma de projetos acadêmicos que ganham visibilidade e empresas encontram soluções inovadoras com apoio de alunos da ETEC.
+            </p>
+            <div class="d-flex gap-2">
+              <a href="{{ url_for('login') }}" class="btn btn-white text-decoration-none">Entrar</a>
+              <a href="{{ url_for('select_role') }}" class="btn btn-outline-white text-decoration-none">Saiba mais</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <section class="container my-5 text-center">
+      <div class="row g-4">
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="icon-circle">
+              <i class="bi bi-people-fill"></i>
+            </div>
+            <h6 class="fw-bold mb-2">Talentos que inovam</h6>
+            <p class="text-muted small mb-0">Alunos da ETEC desenvolvendo projetos que fazem a diferença.</p>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="icon-circle">
+              <i class="bi bi-briefcase-fill"></i>
+            </div>
+            <h6 class="fw-bold mb-2">Empresas que acreditam</h6>
+            <p class="text-muted small mb-0">Organizações que investem em ideias para o futuro.</p>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="icon-circle">
+              <i class="bi bi-globe"></i>
+            </div>
+            <h6 class="fw-bold mb-2">Projetos que transformam</h6>
+            <p class="text-muted small mb-0">Soluções reais para problemas reais do mercado.</p>
+          </div>
+        </div>
+
+        <div class="col-12 col-sm-6 col-lg-3">
+          <div class="feature-card">
+            <div class="icon-circle">
+              <i class="bi bi-chat-left-text-fill"></i>
+            </div>
+            <h6 class="fw-bold mb-2">Conexão que gera impacto</h6>
+            <p class="text-muted small mb-0">Uma ponte entre educação, inovação e oportunidade.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-section container text-center my-4">
+      <h3 class="fw-bold mb-4">Números que mostram impacto</h3>
+      <div class="row g-3">
+        <div class="col-6 col-md-3">
+          <div class="stat-number">+500</div>
+          <p class="text-muted small fw-medium">Projetos publicados</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-number">+200</div>
+          <p class="text-muted small fw-medium">Empresas conectadas</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-number">+1000</div>
+          <p class="text-muted small fw-medium">Alunos conectados</p>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-number">+50k</div>
+          <p class="text-muted small fw-medium">Visualizações de projetos</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="container my-5 text-center">
+      <h3 class="fw-bold mb-5">Como Funciona</h3>
+      <div class="row g-4">
+        <div class="col-12 col-md-4">
+          <div class="step-circle">
+            <i class="bi bi-file-earmark-text"></i>
+          </div>
+          <h5 class="fw-bold fs-6 mb-2">1. Crie seu projeto</h5>
+          <p class="text-muted small">Alunos cadastram seus projetos e mostram suas ideias para o mercado.</p>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="step-circle">
+            <i class="bi bi-search"></i>
+          </div>
+          <h5 class="fw-bold fs-6 mb-2">2. Empresas encontram</h5>
+          <p class="text-muted small">Empresas buscam projetos e encontram soluções inovadoras para seus desafios.</p>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="step-circle">
+            <i class="bi bi-diagram-3"></i>
+          </div>
+          <h5 class="fw-bold fs-6 mb-2">3. Conecte-se e transforme</h5>
+          <p class="text-muted small">Inicie conversas online com ideias que transformam projetos em grandes parcerias.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="container my-5" style="max-width: 850px;">
+      <h3 class="fw-bold text-center mb-4">Perguntas Frequentes (FAQ)</h3>
+      <div class="accordion" id="faqAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+              Qual é o objetivo principal do InvestETEC?
+            </button>
+          </h2>
+          <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+            <div class="accordion-body text-muted small">
+              O InvestETEC busca dar visibilidade aos projetos de alunos da ETEC, conectando-os diretamente com empresas em busca de talentos e soluções inovadoras.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+              Quais são os benefícios para as empresas parceiras?
+            </button>
+          </h2>
+          <div id="faq2" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+            <div class="accordion-body text-muted small">
+              As empresas ganham um canal de acesso facilitado a novas soluções técnicas criadas dentro do ambiente escolar, além de conseguirem identificar e recrutar novos talentos de forma precoce e assertiva.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="container my-5 text-center">
+      <h3 class="fw-bold mb-4">Onde Estamos Localizados</h3>
+      <div class="map-container">
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3705.503290947701!2d-48.3653!3d-21.6054!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94b8e1a8ef15309d%3A0x8e87bf841edcb717!2sR.%20Ces%C3%A1rio%20Motta%2C%20644%20-%20Centro%2C%20Mat%C3%A3o%20-%20SP%2C%2015990-160!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr" 
+          width="100%" 
+          height="380" 
+          style="border:0;" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+    </section>
+
+    <section class="container my-5">
+      <div class="footer-cta d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
+        <div>
+          <h4 class="fw-bold mb-1">Pronto para tirar seu projeto do papel?</h4>
+          <p class="mb-0 opacity-90 small">Junte-se ao InvestETEC e conecte seu talento às melhores oportunidades</p>
+        </div>
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('select_role') }}" class="btn btn-white text-decoration-none">Criar conta gratuita</a>
+          <a href="{{ url_for('select_role') }}" class="btn btn-outline-white text-decoration-none">Sou empresa</a>
+        </div>
+      </div>
+    </section>
   </main>
-  <footer>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-      crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
-      integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
-      crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-      crossorigin="anonymous"></script>
-  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>
