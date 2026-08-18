@@ -26,8 +26,9 @@ class UserRepository:
             data = doc.to_dist()
             return User(
             uid=uid,
-            nome=data['nome'],
-             email=data['email'],
-              created_at=data['created_at'],
-               update_at=data['update_at'],
+            nome=data.get['nome'],
+             email=data.get['email'],
+              created_at=data.get['created_at'],
+               update_at=data.get['update_at'],
             )
+        return None
