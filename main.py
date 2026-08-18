@@ -28,6 +28,10 @@ def register_company():
 def register_visitor():
     return render_template('login/register/register_visitor.html')
 
+@app.route('/sobre')
+def sobre():
+    return render_template('Sobre Nós/sobre.html')
+
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=True)

@@ -1,0 +1,112 @@
+:root {
+    --cor-principal: #FF5B00;
+    --cor-principal-hover: #E05000;
+    --cor-fundo-light: #FFF5F0;
+    --cor-texto: #212529;
+    --cor-texto-mutado: #6c757d;
+}
+
+.text-orange {
+    color: var(--cor-principal) !important;
+}
+
+.bg-orange {
+    background-color: var(--cor-principal) !important;
+}
+
+.badge.bg-orange {
+    background-color: var(--cor-fundo-light) !important;
+    color: var(--cor-principal) !important;
+    font-weight: 700;
+    padding: 8px 16px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+.section-label {
+    display: inline-block;
+    color: var(--cor-principal);
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.hero {
+    background-color: #ffffff;
+    padding: 60px 0;
+}
+
+.hero h1 {
+    color: var(--cor-texto);
+    letter-spacing: -0.5px;
+}
+
+.icon-box {
+    width: 50px;
+    height: 50px;
+    background-color: var(--cor-fundo-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.card {
+    border-radius: 16px !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08) !important;
+}
+
+.step {
+    padding: 20px;
+    border-radius: 16px;
+    background: #ffffff;
+    height: 100%;
+}
+
+.step-number {
+    width: 48px;
+    height: 48px;
+    background-color: var(--cor-fundo-light);
+    color: var(--cor-principal);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin: 0 auto;
+}
+
+.impact-box {
+    background-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(5px);
+    border-radius: 16px;
+    padding: 30px;
+}
+
+.impact-box span {
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: block;
+    margin: 4px 0;
+}
+
+.impact-box hr {
+    border-color: rgba(255, 255, 255, 0.4);
+    margin: 15px 0;
+}
+
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2.2rem;
+    }
+}
