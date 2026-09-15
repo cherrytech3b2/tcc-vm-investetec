@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InvestEtec — Feed de Projetos</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/stylefeedinvestidor.css') }}" />
+</head>
+<body>
+
+  <div class="app">
+
+    <aside class="sidebar">
+      <div class="sidebar__dots" aria-hidden="true"></div>
+
+      <div class="sidebar__brand">
+        <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo InvestEtec" class="sidebar__logo-img" width="35" height="35" style="border-radius: 50%; object-fit: cover;" />
+        <span class="sidebar__brand-name">Invest<strong>Etec</strong></span>
+      </div>
+
+      <nav class="sidebar__nav" aria-label="Navegação principal">
+        <a href="#" class="nav-item nav-item--active" data-nav="inicio">
+          <i class="bi bi-house-door-fill nav-item__icon"></i> Início
+        </a>
+        <a href="#" class="nav-item" data-nav="favoritos">
+          <i class="bi bi-star-fill nav-item__icon"></i> Favoritos
+        </a>
+        <a href="#" class="nav-item" data-nav="mensagens">
+          <i class="bi bi-chat-dots-fill nav-item__icon"></i> Mensagens
+        </a>
+        <a href="#" class="nav-item" data-nav="perfil">
+          <i class="bi bi-person-fill nav-item__icon"></i> Perfil
+        </a>
+        <a href="#" class="nav-item" data-nav="configuracoes">
+          <i class="bi bi-gear-fill nav-item__icon"></i> Configurações
+        </a>
+      </nav>
+    </aside>
+
+    <main class="main">
+
+      <header class="topbar">
+        <div class="topbar__search">
+          <input type="text" id="campo-busca-topo" placeholder="Buscar projetos" aria-label="Buscar projetos" />
+        </div>
+
+        <a href="#" class="topbar__user" style="text-decoration: none; color: inherit; cursor: pointer;">
+          <div class="topbar__user-text">
+            <strong>{{ investidor }}</strong>
+            <span>Investidor</span>
+          </div>
+          <div class="topbar__avatar" aria-hidden="true">TS</div>
+        </a>
+      </header>
+
+      <section class="greeting">
+        <h1>Olá, {{ investidor }}</h1>
+        <p>encontre projetos inovadores para investir</p>
+      </section>
+
+      <section class="hero">
+        <h2 class="hero__title">Encontre projetos incríveis</h2>
+        <p class="hero__subtitle">Conecte-se com alunos talentosos e invista em soluções inovadoras</p>
+
+        <div class="hero__search-row">
+          <div class="hero__search-box">
+            <i class="bi bi-search hero__search-icon"></i>
+            <input
+              type="text"
+              id="campo-busca"
+              placeholder="Buscar projetos"
+              aria-label="Buscar projetos por nome"
+            />
+          </div>
+          <button class="btn btn--outline-light" id="btn-filtros" type="button" aria-expanded="false">
+            Filtros
+          </button>
+        </div>
+
+        <div class="hero__filters-row">
+          <select class="filter-pill" id="filtro-categoria" aria-label="Filtrar por área">
+            <option value="">Todas as áreas</option>
+            {% for c in projetos|map(attribute='categoria')|unique|list %}
+            <option value="{{ c }}">{{ c }}</option>
+            {% endfor %}
+          </select>
+
+          <select class="filter-pill" id="filtro-nivel" aria-label="Filtrar por nível">
+            <option value="">Todos os níveis</option>
+            {% for n in projetos|map(attribute='nivel')|unique|list %}
+            <option value="{{ n }}">{{ n }}</option>
+            {% endfor %}
+          </select>
+
+          <select class="filter-pill" id="filtro-tipo" aria-label="Filtrar por tipo">
+            <option value="">Todos os tipos</option>
+            {% for t in projetos|map(attribute='tipo')|unique|list %}
+            <option value="{{ t }}">{{ t }}</option>
+            {% endfor %}
+          </select>
+
+          <button class="link-light" id="btn-limpar-filtros" type="button">Limpar filtros</button>
+        </div>
+
+        <div class="hero__extra-filters" id="filtros-extra" hidden>
+          <span class="hero__extra-hint">Filtros avançados: ordene por mais recentes, maior potencial de retorno ou proximidade de encerramento da rodada.</span>
+        </div>
+      </section>
+
+      <section class="projetos">
+        <h3 class="projetos__titulo">Projetos em destaque</h3>
+
+        <div class="projetos__grid" id="grid-projetos">
+          {% for p in projetos %}
+          <article
+            class="card"
+            data-categoria="{{ p.categoria }}"
+            data-nivel="{{ p.nivel }}"
+            data-tipo="{{ p.tipo }}"
+            data-titulo="{{ p.titulo|lower }}"
+          >
+            <div class="card__thumb" style="background: linear-gradient(135deg, {{ p.cor_inicio }}, {{ p.cor_fim }});">
+              <span class="card__thumb-icon">{{ p.icone }}</span>
+            </div>
+
+            <div class="card__body">
+              <h4 class="card__title">{{ p.titulo }}</h4>
+              <p class="card__desc">Descrição do projeto: {{ p.descricao }}</p>
+            </div>
+
+            <div class="card__footer">
+              <span class="card__tag">{{ p.categoria }}</span>
+              <button
+                class="btn btn--interesse {{ 'btn--interesse-ativo' if p.id in ids_com_interesse else '' }}"
+                data-projeto-id="{{ p.id }}"
+                type="button"
+              >
+                {{ 'Interesse registrado ✓' if p.id in ids_com_interesse else 'Tenho Interesse' }}
+              </button>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+
+        <p class="projetos__vazio" id="msg-vazio" hidden>
+          Nenhum projeto encontrado com esses filtros.
+        </p>
+      </section>
+
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="{{ url_for('static', filename='js/scriptfeedinvestidor.js') }}"></script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -7,15 +7,21 @@ app = Flask(__name__)
 def index():
     return render_template('pages/landingpage.html')
 
-@app.route("/login")
+@app.route("/login", methods=['GET', 'POST'])
 def login():
+    if request.method == 'POST':
+        return redirect(url_for('feed'))
+       
     return render_template('login/login.html')
+
+@app.route("/feed")
+def feed():
+    return render_template('feed/feedinvestidor.html')
 
 @app.route("/select-role")
 def select_role():
     return render_template('login/register/select_role.html')
 
-# Rotas de cadastro
 @app.route("/register/student")
 def register_student():
     return render_template('login/register/register_student.html')
@@ -35,6 +41,3 @@ def sobre():
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=True)
-
-def main():
-   app.run(host="0.0.0.0", port = int(os.environ.get("PORT", 10000)))

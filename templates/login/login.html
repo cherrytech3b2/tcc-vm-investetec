@@ -17,7 +17,7 @@
     <div class="row align-items-center gy-5">
 
       <div class="col-lg-7 text-start">
-        <h1 class="brand-title">Invest<span style="color: #e2ff00;">Etec</span></h1>
+        <h1 class="brand-title">Invest<span style="color: #e85d0f;">Etec</span></h1>
         <h2 class="brand-subtitle">Conectando talentos a oportunidades</h2>
 
         <p class="brand-description">
@@ -59,22 +59,22 @@
           <h4>Bem-Vindo!</h4>
           <p class="subtitle">Faça login para continuar</p>
 
-          <form>
+          <form action="/login" method="POST">
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" placeholder="seu@gmail.com" required>
+              <input type="email" class="form-control" id="email" name="email" placeholder="seu@gmail.com" required>
             </div>
 
             <div class="mb-3">
               <label for="senha" class="form-label">Senha</label>
-              <input type="password" class="form-control" id="senha" required>
+              <input type="password" class="form-control" id="senha" name="senha" required>
             </div>
 
-            <button type="submit" class="btn btn-submit">Entrar</button>
+            <button type="submit" class="btn btn-primary w-100">Entrar</button>
           </form>
 
           <div class="register-text mt-3">
-            Não tem uma conta? <a href="#" class="text-orange fw-bold text-decoration-none">Criar conta</a>
+            Não tem uma conta? <a href="{{ url_for('select_role') }}" class="text-orange fw-bold text-decoration-none">Criar conta</a>
           </div>
 
         </div>
