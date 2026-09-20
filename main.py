@@ -18,21 +18,9 @@ def login():
 def feed():
     return render_template('feed/feedinvestidor.html')
 
-@app.route("/select-role")
-def select_role():
-    return render_template('login/register/select_role.html')
-
-@app.route("/register/student")
-def register_student():
-    return render_template('login/register/register_student.html')
-
-@app.route("/register/company")
-def register_company():
-    return render_template('login/register/register_company.html')
-
-@app.route("/register/visitor")
-def register_visitor():
-    return render_template('login/register/register_visitor.html')
+@app.route("/register")
+def register():
+    return render_template('login/register.html')
 
 @app.route('/sobre')
 def sobre():
