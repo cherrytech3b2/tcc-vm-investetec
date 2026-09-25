@@ -8,6 +8,23 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
 </head>
 <body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo" width="36" height="36"
+          class="rounded-circle me-2">
+        <span class="fw-bold fs-5">
+          Invest<span style="color: var(--cor-principal);">ETEC</span>
+        </span>
+      </a>
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <a class="nav-link active" href="{{ url_for('index') }}">Início</a>
+        <a href="{{ url_for('sobre') }}" class="btn btn-custom text-decoration-none">Sobre nós</a>
+        <a href="{{ url_for('register') }}" class="btn btn-custom text-decoration-none">Cadastrar-se</a>
+        <a href="{{ url_for('login') }}" class="btn btn-orange text-decoration-none">Entrar</a>
+      </div>
+    </div>
+  </nav>
 <div class="card">
   <div class="panel-left">
     <div class="dots">

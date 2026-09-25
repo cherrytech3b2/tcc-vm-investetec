@@ -1,3 +1,16 @@
+:root {
+  --primary-orange: #f95400;
+  --orange-gradient: linear-gradient(135deg, #ff6b00 0%, #f95400 100%);
+  --bg-cream: #f8f4ee;
+  --glass-white: rgba(255, 255, 255, 0.72);
+  --glass-orange: rgba(249, 84, 0, 0.10);
+  --glass-border: rgba(249, 84, 0, 0.22);
+  --soft-shadow: 0 14px 40px rgba(72, 38, 15, 0.10);
+  --orange-glow: 0 0 0 1px rgba(249, 84, 0, 0.20),
+      0 0 18px rgba(249, 84, 0, 0.24),
+      0 10px 30px rgba(249, 84, 0, 0.12);
+}
+
 * {
   margin: 0;
   padding: 0;
