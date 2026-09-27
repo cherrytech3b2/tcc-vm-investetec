@@ -13,6 +13,7 @@
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+<<<<<<< HEAD
         <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo InvestETEC" width="36" height="36"
           class="navbar-logo me-2">
         <span class="fw-bold fs-5">
@@ -25,6 +26,48 @@
         <a class="navbar-button" href="{{ url_for('sobre') }}">Sobre nós</a>
         <a class="navbar-button navbar-button-active" href="{{ url_for('register') }}">Cadastrar-se</a>
         <a class="navbar-button navbar-button-primary" href="{{ url_for('login') }}">Entrar</a>
+=======
+        <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo" width="36" height="36"
+          class="rounded-circle me-2">
+        <span class="fw-bold fs-5">
+          Invest<span style="color: var(--cor-principal);">ETEC</span>
+        </span>
+      </a>
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <a class="nav-link active" href="{{ url_for('index') }}">Início</a>
+        <a href="{{ url_for('sobre') }}" class="btn btn-custom text-decoration-none">Sobre nós</a>
+        <a href="{{ url_for('register') }}" class="btn btn-custom text-decoration-none">Cadastrar-se</a>
+        <a href="{{ url_for('login') }}" class="btn btn-orange text-decoration-none">Entrar</a>
+      </div>
+    </div>
+  </nav>
+<div class="card">
+  <div class="panel-left">
+    <div class="dots">
+      <span></span><span></span><span></span>
+      <span></span><span></span><span></span>
+    </div>
+    <div class="logo">
+      <div class="logo-icon-wrap">
+        <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="logo" class="logo-icon">
+      </div>
+      <div class="logo-text">Invest<span>ETEC</span></div>
+    </div>
+    <div class="hero-title">Junte-se ao<br>Invest<span class="etec">ETEC</span></div>
+    <div class="hero-sub">Crie sua conta e comece a conectar talentos a oportunidades reais</div>
+    <div class="features">
+      <div class="feature-box">
+        <strong>Conexão</strong>
+        <p>Conecte-se com alunos, empresas e projetos inovadores</p>
+      </div>
+      <div class="feature-box">
+        <strong>Oportunidades</strong>
+        <p>Encontre projetos que geram impacto e valor</p>
+      </div>
+      <div class="feature-box">
+        <strong>Crescimento</strong>
+        <p>Transforme ideias em soluções que fazem a diferença</p>
+>>>>>>> 468259dedf709c33ea3f025a483e83903b26c00d
       </div>
     </div>
   </nav>

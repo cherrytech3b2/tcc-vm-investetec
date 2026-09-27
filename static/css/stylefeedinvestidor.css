@@ -1,4 +1,5 @@
 :root {
+<<<<<<< HEAD
 --cor-principal: #f95400;
 --cor-principal-hover: #e04b00;
 --cor-fundo: #f8f4ee;
@@ -17,6 +18,30 @@
 --raio-medio: 14px;
 --raio-pequeno: 10px;
 --raio-pill: 999px;
+=======
+  --laranja-1: #ff8a3d;
+  --laranja-2: #ff6a1a;
+  --laranja-escuro: #e85d0f;
+  --texto-principal: #1d1d1f;
+  --texto-secundario: #6b6f76;
+  --branco: #ffffff;
+  --fundo: #fafafa;
+  --borda-suave: #f0e6dd;
+  --primary-orange: #f95400;
+  --orange-gradient: linear-gradient(135deg, #ff6b00 0%, #f95400 100%);
+  --bg-cream: #f8f4ee;
+  --glass-white: rgba(255, 255, 255, 0.72);
+  --glass-orange: rgba(249, 84, 0, 0.10);
+  --glass-border: rgba(249, 84, 0, 0.22);
+  --soft-shadow: 0 14px 40px rgba(72, 38, 15, 0.10);
+  --orange-glow: 0 0 0 1px rgba(249, 84, 0, 0.20),
+  0 0 18px rgba(249, 84, 0, 0.24),
+  0 10px 30px rgba(249, 84, 0, 0.12);
+  --sombra-card: 0 10px 25px rgba(20, 20, 20, 0.06);
+  --raio-grande: 20px;
+  --raio-medio: 14px;
+  --raio-pill: 999px;
+>>>>>>> 468259dedf709c33ea3f025a483e83903b26c00d
 }
 
 * {
