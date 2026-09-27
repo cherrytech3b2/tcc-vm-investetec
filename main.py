@@ -26,6 +26,10 @@ def register():
 def sobre():
     return render_template('Sobre Nós/sobre.html')
 
+@app.route('/favoritos')
+def favoritos():
+    return render_template('feed/favoritos.html')
+
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port, debug=True)

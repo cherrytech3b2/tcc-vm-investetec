@@ -7,9 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function configurarNavegacaoLateral() {
   const itens = document.querySelectorAll(".nav-item");
+
   itens.forEach((item) => {
-    item.addEventListener("click", (evento) => {
-      evento.preventDefault();
+    item.addEventListener("click", () => {
       itens.forEach((i) => i.classList.remove("nav-item--active"));
       item.classList.add("nav-item--active");
     });
