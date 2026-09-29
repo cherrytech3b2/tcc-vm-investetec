@@ -1,19 +1,18 @@
 from dataclasses import dataclass
 
-@dataclass 
-class : 
+@dataclass
+class Project:
     id: str
     name: str
     description: str
-    category: str
-    author: str
-    created_at: str
-    views_count: str
-    status: float
+    course: str
+    status: str
+    has_interest: bool
+    is_favorite: bool
     full_name: str
     email: str
     password: str
-    user_type: str
-    accepted_terms: str
+    account_type: str
+    accepted_terms: bool
         
   
