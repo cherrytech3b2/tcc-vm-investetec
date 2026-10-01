@@ -1,40 +1,32 @@
-{% extends "base_aluno.html" %}
-{% block nav_inicio %}nav-item--active{% endblock %}
+{% extends "base_app.html" %}
 {% block conteudo %}
-<section class="greeting">
-  <h1>Olá, {{ nome }}</h1>
-  <p>Bem-vindo à sua área</p>
-</section>
-
+<section class="greeting"><h1>Olá, {{ session.nome }}</h1><p>Bem-vindo à sua área</p></section>
 <section class="stats">
   <div class="stat"><i class="bi bi-folder-fill"></i><span>Projetos</span><strong>{{ projetos|length }}</strong></div>
   <div class="stat"><i class="bi bi-pencil-square"></i><span>Rascunhos</span><strong>{{ projetos|selectattr('status','equalto','Rascunho')|list|length }}</strong></div>
   <div class="stat"><i class="bi bi-eye-fill"></i><span>Disponíveis</span><strong>{{ projetos|selectattr('status','equalto','Disponível')|list|length }}</strong></div>
 </section>
-
 <section class="projetos">
   <div class="projetos__heading">
     <h3 class="projetos__titulo">Meus projetos</h3>
-    <a class="btn-aluno" href="{{ url_for('aluno.formulario') }}"><i class="bi bi-plus-lg"></i> Novo projeto</a>
+    <a class="btn-aluno" href="{{ url_for('aluno_form') }}"><i class="bi bi-plus-lg"></i> Novo projeto</a>
   </div>
-
   {% if projetos %}
   <div class="projetos__grid">
     {% for p in projetos %}
     <article class="card">
       <div class="card__thumb">
-        {% if p.capa %}<img src="{{ url_for('static', filename=p.capa) }}" alt="Foto principal do projeto {{ p.titulo }}">{% endif %}
+        {% if p.imagem %}<img src="{{ p.imagem }}" alt="Foto principal de {{ p.titulo }}">{% endif %}
         <span class="card__thumb-label">{{ p.status|upper }}</span>
       </div>
       <div class="card__body">
         <div class="card__category"><i class="bi bi-bookmark-fill"></i> {{ p.categoria or 'Sem curso' }}</div>
         <h4 class="card__title">{{ p.titulo or 'Projeto sem nome' }}</h4>
         <p class="card__desc">{{ p.descricao or 'Descrição do projeto…' }}</p>
-        <small class="card__data">Atualizado em {{ p.atualizado_em.strftime('%d/%m/%Y') }}</small>
       </div>
       <div class="card__acoes">
-        <a class="btn-aluno" href="{{ url_for('aluno.formulario', pid=p.id) }}">{{ 'Continuar preenchimento' if p.status == 'Rascunho' else 'Editar' }}</a>
-        <form method="post" action="{{ url_for('aluno.apagar', pid=p.id) }}" onsubmit="return confirm('Apagar este projeto?');">
+        <a class="btn-aluno" href="{{ url_for('aluno_form', pid=p.id) }}">{{ 'Continuar preenchimento' if p.status == 'Rascunho' else 'Editar' }}</a>
+        <form method="post" action="{{ url_for('aluno_apagar', pid=p.id) }}" onsubmit="return confirm('Apagar este projeto?');">
           <button class="btn-aluno btn-aluno--perigo" type="submit">Apagar</button>
         </form>
       </div>

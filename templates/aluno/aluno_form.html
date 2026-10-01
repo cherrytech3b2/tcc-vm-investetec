@@ -1,0 +1,90 @@
+{% extends "base_app.html" %}
+{% macro erro(c) %}{% if erros.get(c) %}<small class="erro"><i class="bi bi-exclamation-circle-fill"></i> {{ erros[c] }}</small>{% endif %}{% endmacro %}
+{% macro req() %}<em class="req">obrigatório</em>{% endmacro %}
+{% block conteudo %}
+<section class="greeting"><h1>{{ 'Editar projeto' if p.id else 'Novo projeto' }}</h1>
+<p>Preencha tudo e clique em <strong>Enviar projeto</strong>, ou salve como rascunho para continuar depois.</p></section>
+
+<form method="post" enctype="multipart/form-data" class="wizard" novalidate>
+
+<fieldset class="etapa"><legend>1. Informações básicas</legend>
+  <label>Nome do projeto {{ req() }}<input name="titulo" maxlength="80" value="{{ p.titulo or '' }}" placeholder="Ex.: Smart Garden">{{ erro('titulo') }}</label>
+  <label>Descrição resumida {{ req() }}<small class="dica">Aparece no card do investidor.</small><textarea name="descricao" maxlength="200" rows="3">{{ p.descricao or '' }}</textarea>{{ erro('descricao') }}</label>
+  <label>Curso principal {{ req() }}<select name="categoria"><option value="">Selecione</option>
+    {% for c in cursos %}<option {{ 'selected' if p.categoria == c }}>{{ c }}</option>{% endfor %}</select>{{ erro('categoria') }}</label>
+  <label>Estágio do projeto {{ req() }}<select name="nivel"><option value="">Selecione</option>
+    {% for n in niveis %}<option {{ 'selected' if p.nivel == n }}>{{ n }}</option>{% endfor %}</select>{{ erro('nivel') }}</label>
+  <label>Tecnologias {{ req() }}<small class="dica">Separe por vírgula. Ex.: Python, Flask, Arduino</small>
+    <input name="tecnologias" value="{{ p.tecnologias|join(', ') if p.tecnologias else '' }}">{{ erro('tecnologias') }}</label>
+</fieldset>
+
+<fieldset class="etapa"><legend>2. Equipe e cursos</legend>
+  <label>Tipo de projeto {{ req() }}<select name="tipo" id="tipo">
+    <option value="Individual" {{ 'selected' if p.tipo != 'Integrado' }}>Projeto individual</option>
+    <option value="Integrado" {{ 'selected' if p.tipo == 'Integrado' }}>Projeto integrado</option></select></label>
+  <label>Nome do responsável {{ req() }}<input name="responsavel" maxlength="80" value="{{ p.responsavel or '' }}">{{ erro('responsavel') }}</label>
+  <label>Turma <em class="opc">opcional</em><input name="turma" maxlength="30" value="{{ p.turma or '' }}"></label>
+  <div id="bloco-int" {{ 'hidden' if p.tipo != 'Integrado' }}>
+    <p class="rotulo">Cursos envolvidos {{ req() }}</p>
+    <div class="checks">{% for c in cursos %}<label class="check"><input type="checkbox" name="cursos_integrados" value="{{ c }}" {{ 'checked' if c in (p.cursos_integrados or []) }}> {{ c }}</label>{% endfor %}</div>
+    {{ erro('cursos_integrados') }}
+    <label>Integrantes <small class="dica">Um por linha. Ex.: Maria Silva - Mecatrônica - Eletrônica</small>
+      <textarea name="integrantes" rows="4">{{ p.integrantes or '' }}</textarea></label>
+  </div>
+</fieldset>
+
+<fieldset class="etapa"><legend>3. Descrição completa</legend>
+  <label>Descrição completa {{ req() }}<small class="dica">O que é, como funciona, como surgiu, objetivo e como pode ser usado.</small>
+    <textarea name="descricao_completa" rows="6">{{ p.descricao_completa or '' }}</textarea>{{ erro('descricao_completa') }}</label>
+</fieldset>
+
+<fieldset class="etapa"><legend>4. Pitch do projeto</legend>
+  {% for c, t, d in [('problema','Problema','Qual problema o projeto resolve?'),('solucao','Solução','Como o projeto resolve esse problema?'),('diferencial','Diferencial','O que o torna diferente de outras soluções?'),('publico_alvo','Público-alvo','Para quem essa solução foi desenvolvida?'),('potencial','Potencial','Como o projeto pode crescer ou ser usado no futuro?')] %}
+  <label>{{ t }} {{ req() }}<small class="dica">{{ d }}</small><textarea name="{{ c }}" rows="3">{{ p[c] or '' }}</textarea>{{ erro(c) }}</label>
+  {% endfor %}
+</fieldset>
+
+<fieldset class="etapa"><legend>5. Fotos e vídeo</legend>
+  <div class="fotos">
+    {% for i in (1,2,3) %}
+    <div><p class="rotulo">Foto {{ i }} {{ req() }}{% if i == 1 %} · imagem principal{% endif %}</p>
+      <img class="prev" id="prev{{ i }}" alt="Pré-visualização da foto {{ i }}" {% if p['foto_' ~ i] %}src="{{ p['foto_' ~ i] }}"{% else %}hidden{% endif %}>
+      <input type="file" name="foto{{ i }}" accept=".jpg,.jpeg,.png,.webp" data-prev="prev{{ i }}" aria-label="Foto {{ i }}">{{ erro('foto' ~ i) }}</div>
+    {% endfor %}
+  </div>
+  <p class="dica">JPG, PNG ou WEBP, até 5 MB. Para trocar uma foto, escolha outro arquivo.</p>
+  <p class="rotulo">Vídeo {{ req() }}</p>
+  <p class="dica">O vídeo deve possuir aproximadamente 1 minuto. MP4, WEBM ou MOV, até 100 MB.</p>
+  <video class="prev-video" id="pv" controls {% if p.video %}src="{{ p.video }}"{% else %}hidden{% endif %}></video>
+  <input type="file" name="video" accept=".mp4,.webm,.mov" id="inv" aria-label="Vídeo">{{ erro('video') }}
+</fieldset>
+
+<fieldset class="etapa"><legend>6. Contato</legend>
+  <p class="dica">Este contato será disponibilizado aos investidores interessados. Informe ao menos um.</p>{{ erro('contato') }}
+  <label>E-mail<input type="email" name="contato_email" value="{{ p.contato_email or '' }}" placeholder="email@exemplo.com">{{ erro('contato_email') }}</label>
+  <label>Telefone<input type="tel" name="contato_telefone" value="{{ p.contato_telefone or '' }}" placeholder="(16) 99999-9999">{{ erro('contato_telefone') }}</label>
+  <label class="check"><input type="checkbox" name="autoriza" {{ 'checked' if p.autoriza }}> Tenho autorização para divulgar este contato {{ req() }}</label>{{ erro('autoriza') }}
+</fieldset>
+
+<div class="wizard__nav">
+  <a class="btn-aluno btn-aluno--claro" href="{{ url_for('aluno_inicio') }}">Cancelar</a>
+  <button class="btn-aluno btn-aluno--claro" type="submit" name="acao" value="rascunho"><i class="bi bi-save"></i> Salvar rascunho</button>
+  <button class="btn-aluno" type="submit" name="acao" value="enviar" onclick="return confirm('Deseja enviar este projeto?');">Enviar projeto</button>
+</div>
+</form>
+
+<script>
+const t = document.getElementById('tipo'), b = document.getElementById('bloco-int');
+t.onchange = () => b.hidden = t.value !== 'Integrado';
+document.querySelectorAll('input[data-prev]').forEach(i => i.onchange = () => {
+  const a = i.files[0], img = document.getElementById(i.dataset.prev); if (!a) return;
+  if (!/\.(jpe?g|png|webp)$/i.test(a.name) || a.size > 5 * 1048576) { alert('Use JPG, PNG ou WEBP de até 5 MB.'); i.value = ''; return; }
+  img.src = URL.createObjectURL(a); img.hidden = false;
+});
+document.getElementById('inv').onchange = e => {
+  const a = e.target.files[0], v = document.getElementById('pv'); if (!a) return;
+  if (!/\.(mp4|webm|mov)$/i.test(a.name) || a.size > 100 * 1048576) { alert('Use MP4, WEBM ou MOV de até 100 MB.'); e.target.value = ''; return; }
+  v.src = URL.createObjectURL(a); v.hidden = false;
+};
+</script>
+{% endblock %}

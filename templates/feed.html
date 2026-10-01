@@ -1,0 +1,45 @@
+{% extends "base_app.html" %}
+{% from "_card.html" import card %}
+{% block busca %}
+<div class="topbar__search"><i class="bi bi-search"></i><input type="text" id="busca" placeholder="Buscar projetos" aria-label="Buscar projetos"></div>
+{% endblock %}
+{% block conteudo %}
+<section class="greeting">
+  <h1>Olá, {{ session.nome }}</h1>
+  <p>{{ 'Encontre projetos inovadores para investir.' if modo == 'investidor' else 'Veja o que os outros alunos da ETEC estão criando.' }}</p>
+</section>
+
+<section class="hero">
+  <div class="hero__glow hero__glow--one"></div><div class="hero__glow hero__glow--two"></div>
+  <div class="hero__content">
+    <h2 class="hero__title">{{ 'Encontre projetos incríveis' if modo == 'investidor' else 'Feed de projetos' }}</h2>
+    <p class="hero__subtitle" style="margin-bottom:0">{{ 'Conecte-se com alunos talentosos e invista em soluções inovadoras.' if modo == 'investidor' else 'Inspire-se com os projetos já publicados na plataforma.' }}</p>
+    <div class="hero__filters-row">
+      <select class="filter-pill" id="f-curso" aria-label="Filtrar por curso"><option value="">Todos os cursos</option>{% for c in cursos %}<option>{{ c }}</option>{% endfor %}</select>
+      <select class="filter-pill" id="f-nivel" aria-label="Filtrar por estágio"><option value="">Todos os estágios</option>{% for n in niveis %}<option>{{ n }}</option>{% endfor %}</select>
+      <select class="filter-pill" id="f-tipo" aria-label="Filtrar por tipo"><option value="">Todos os tipos</option><option>Individual</option><option>Integrado</option></select>
+      <button class="link-light" id="limpar" type="button">Limpar filtros</button>
+    </div>
+  </div>
+</section>
+
+<section class="projetos">
+  <div class="projetos__heading">
+    <div><h3 class="projetos__titulo">Projetos publicados</h3></div>
+    <span class="projetos__count"><i class="bi bi-grid-3x3-gap-fill"></i> <b id="n">{{ projetos|length }}</b> projetos</span>
+  </div>
+  <div class="projetos__grid">
+    {% for p in projetos %}{{ card(p, p.id in favoritos, modo) }}{% endfor %}
+  </div>
+  <div class="projetos__vazio" id="vazio-geral" {{ 'hidden' if projetos }}>
+    <i class="bi bi-folder2-open"></i><strong>Ainda não há projetos publicados</strong>
+    <span>{{ 'Volte em breve: os alunos estão preparando seus projetos.' if modo == 'investidor' else 'Seja o primeiro: cadastre o seu projeto.' }}</span>
+  </div>
+  <div class="projetos__vazio" id="msg-vazio" hidden><i class="bi bi-search"></i><strong>Nenhum projeto encontrado</strong><span>Tente outros termos ou limpe os filtros.</span></div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script id="dados" type="application/json">{{ projetos|tojson }}</script>
+<script>window.APP = { modo: {{ modo|tojson }}, favs: {{ favoritos|tojson }} };</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

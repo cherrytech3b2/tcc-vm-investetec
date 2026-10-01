@@ -15,21 +15,22 @@
 
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-        <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
-            <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo InvestETEC" width="36" height="36" class="navbar-logo me-2">
-            <span class="fw-bold fs-5">
-                Invest<span class="navbar-brand-highlight">ETEC</span>
-            </span>
-        </a>
+      <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+        <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo InvestETEC" width="36" height="36"
+          class="navbar-logo me-2">
+        <span class="fw-bold fs-5">
+          Invest<span class="navbar-brand-highlight">ETEC</span>
+        </span>
+      </a>
 
-        <div class="navbar-links ms-auto d-flex align-items-center gap-3">
-            <a class="navbar-link" href="{{ url_for('index') }}">Início</a>
-            <a class="navbar-button" href="{{ url_for('sobre') }}">Sobre nós</a>
-            <a class="navbar-button" href="{{ url_for('register') }}">Cadastrar-se</a>
-            <a class="navbar-button navbar-button-primary" href="{{ url_for('login') }}">Entrar</a>
-        </div>
+      <div class="navbar-links ms-auto d-flex align-items-center gap-3">
+        <a class="navbar-link" href="{{ url_for('index') }}">Início</a>
+        <a class="navbar-button" href="{{ url_for('sobre') }}">Sobre nós</a>
+        <a class="navbar-button" href="{{ url_for('register') }}">Cadastrar-se</a>
+        <a class="navbar-button navbar-button-primary" href="{{ url_for('login') }}">Entrar</a>
+      </div>
     </div>
-</nav>
+  </nav>
 
   <main class="container">
     <div class="row align-items-center gy-5">
@@ -108,17 +109,35 @@
                   required>
               </div>
             </div>
-
-            <button type="submit" class="btn btn-primary w-100">
-              Entrar
-              <i class="bi bi-arrow-right"></i>
+            <button type="submit" name="perfil" value="aluno" class="btn btn-primary w-100 mb-2">
+              <i class="bi bi-mortarboard-fill"></i> Entrar como Aluno / Estagiário
             </button>
-          </form>
+            <button type="submit" name="perfil" value="investidor" class="btn btn-perfil-invest w-100">
+              <i class="bi bi-briefcase-fill"></i> Entrar como Investidor / Interessado
+            </button>
 
-          <div class="register-text">
-            Não tem uma conta?
-            <a href="{{ url_for('register') }}">Criar conta</a>
-          </div>
+            <!-- e cole este <style> antes de </head> -->
+            <style>
+              .btn-perfil-invest {
+                background: #fff;
+                color: #f95400;
+                border: 2px solid #f95400;
+                font-weight: 700;
+                border-radius: 14px;
+                padding: 10px
+              }
+
+              .btn-perfil-invest:hover {
+                background: #fff0e6;
+                color: #e04b00;
+                border-color: #e04b00
+              }
+            </style>
+
+            <div class="register-text">
+              Não tem uma conta?
+              <a href="{{ url_for('register') }}">Criar conta</a>
+            </div>
 
         </div>
       </div>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InvestETEC — {{ 'Área do aluno' if session.perfil == 'aluno' else 'Área do investidor' }}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/stylefeedinvestidor.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/stylealuno.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app_extra.css') }}">
+</head>
+<body data-pagina="{{ request.endpoint }}">
+{% set ep = request.endpoint %}
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar__decor" aria-hidden="true"></div>
+    <div class="sidebar__brand">
+      <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo InvestETEC" class="sidebar__logo-img" width="36" height="36">
+      <span class="sidebar__brand-name">Invest<span>ETEC</span></span>
+    </div>
+    <nav class="sidebar__nav" aria-label="Menu principal">
+      {% if session.perfil == 'aluno' %}
+      <a href="{{ url_for('aluno_inicio') }}" class="nav-item {{ 'nav-item--active' if ep == 'aluno_inicio' }}"><i class="bi bi-house-door-fill nav-item__icon"></i><span>Meus projetos</span></a>
+      <a href="{{ url_for('aluno_form') }}" class="nav-item {{ 'nav-item--active' if ep == 'aluno_form' }}"><i class="bi bi-plus-square-fill nav-item__icon"></i><span>Novo projeto</span></a>
+      <a href="{{ url_for('aluno_feed') }}" class="nav-item {{ 'nav-item--active' if ep == 'aluno_feed' }}"><i class="bi bi-grid-fill nav-item__icon"></i><span>Feed de projetos</span></a>
+      {% else %}
+      <a href="{{ url_for('feed') }}" class="nav-item {{ 'nav-item--active' if ep == 'feed' }}"><i class="bi bi-house-door-fill nav-item__icon"></i><span>Início</span></a>
+      <a href="{{ url_for('favoritos') }}" class="nav-item {{ 'nav-item--active' if ep == 'favoritos' }}"><i class="bi bi-heart-fill nav-item__icon"></i><span>Favoritos</span></a>
+      {% endif %}
+      <a href="{{ url_for('perfil') }}" class="nav-item {{ 'nav-item--active' if ep == 'perfil' }}"><i class="bi bi-person-fill nav-item__icon"></i><span>Perfil</span></a>
+      <div class="nav-sep" aria-hidden="true"></div>
+      <a href="{{ url_for('logout') }}" class="nav-item"><i class="bi bi-box-arrow-left nav-item__icon"></i><span>Sair</span></a>
+    </nav>
+    <div class="sidebar__bottom"><div class="sidebar__bottom-line"></div><span>InvestETEC</span><small>Conectando ideias a oportunidades</small></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      {% block busca %}{% endblock %}
+      <a href="{{ url_for('perfil') }}" class="topbar__user" aria-label="Abrir meu perfil">
+        <div class="topbar__user-text"><strong>{{ session.nome }}</strong><span>{{ 'Aluno' if session.perfil == 'aluno' else 'Investidor' }}</span></div>
+        <div class="topbar__avatar">{% if eu.foto %}<img src="{{ eu.foto }}" alt="">{% else %}{{ session.nome[:2]|upper }}{% endif %}</div>
+      </a>
+    </header>
+    {% for cat, m in get_flashed_messages(with_categories=true) %}
+      <div class="aviso aviso--{{ cat }}" role="status">{{ m }}</div>
+    {% endfor %}
+    {% block conteudo %}{% endblock %}
+  </main>
+</div>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="modal__overlay" data-fechar></div>
+  <div class="modal__content" role="dialog" aria-modal="true" aria-label="Detalhes do projeto">
+    <button class="modal__close" type="button" data-fechar aria-label="Fechar"><i class="bi bi-x-lg"></i></button>
+    <div id="modal-corpo"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+{% block scripts %}{% endblock %}
+</body>
+</html>

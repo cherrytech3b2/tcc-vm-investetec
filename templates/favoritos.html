@@ -1,0 +1,26 @@
+{% extends "base_app.html" %}
+{% from "_card.html" import card %}
+{% block busca %}
+<div class="topbar__search"><i class="bi bi-search"></i><input type="text" id="busca" placeholder="Buscar nos favoritos" aria-label="Buscar nos favoritos"></div>
+{% endblock %}
+{% block conteudo %}
+<section class="greeting"><h1>Meus favoritos</h1><p>Os projetos que você marcou para acompanhar.</p></section>
+<section class="projetos">
+  <div class="projetos__heading">
+    <h3 class="projetos__titulo">Projetos favoritados</h3>
+    <span class="projetos__count"><i class="bi bi-heart-fill"></i> <b id="n">{{ projetos|length }}</b> projetos</span>
+  </div>
+  <div class="projetos__grid">{% for p in projetos %}{{ card(p, true, modo) }}{% endfor %}</div>
+  <div class="projetos__vazio" id="vazio-geral" {{ 'hidden' if projetos }}>
+    <i class="bi bi-heart"></i><strong>Você ainda não favoritou nenhum projeto</strong>
+    <span>Toque no coração de um projeto no feed para guardá-lo aqui.</span>
+    <a class="btn-aluno" style="margin-top:14px" href="{{ url_for('feed') }}">Explorar projetos</a>
+  </div>
+  <div class="projetos__vazio" id="msg-vazio" hidden><i class="bi bi-search"></i><strong>Nenhum favorito encontrado</strong></div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script id="dados" type="application/json">{{ projetos|tojson }}</script>
+<script>window.APP = { modo: "investidor", favs: {{ favoritos|tojson }} };</script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}

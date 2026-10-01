@@ -1,0 +1,51 @@
+{% extends "base_app.html" %}
+{% macro erro(c) %}{% if erros.get(c) %}<small class="erro"><i class="bi bi-exclamation-circle-fill"></i> {{ erros[c] }}</small>{% endif %}{% endmacro %}
+{% block conteudo %}
+{% set aluno = session.perfil == 'aluno' %}
+<section class="greeting"><h1>Meu perfil</h1><p>Atualize seus dados. O e-mail de acesso não pode ser alterado.</p></section>
+
+<form method="post" enctype="multipart/form-data" class="wizard" novalidate>
+  <fieldset class="etapa"><legend>Foto</legend>
+    <div class="perfil__topo">
+      <div class="perfil__avatar" id="avatar">{% if d.foto %}<img src="{{ d.foto }}" alt="Sua foto de perfil">{% else %}{{ session.nome[:2]|upper }}{% endif %}</div>
+      <div>
+        <input type="file" name="foto" id="foto" accept=".jpg,.jpeg,.png,.webp" aria-label="Foto de perfil">
+        <small class="dica">JPG, PNG ou WEBP, até 5 MB.</small>{{ erro('foto') }}
+        {% if d.foto %}<label class="check"><input type="checkbox" name="remover_foto"> Remover foto atual</label>{% endif %}
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="etapa"><legend>Dados pessoais</legend>
+    <label>Nome <em class="req">obrigatório</em><input name="nome" maxlength="80" value="{{ d.get('nome', session.nome) }}">{{ erro('nome') }}</label>
+    <label>E-mail de acesso<input value="{{ session.email }}" disabled></label>
+    <label>Telefone <em class="opc">opcional</em><input type="tel" name="telefone" value="{{ d.get('telefone', '') }}" placeholder="(16) 99999-9999">{{ erro('telefone') }}</label>
+    <label>Sobre você <em class="opc">opcional</em><small class="dica">Até 300 caracteres.</small><textarea name="bio" maxlength="300" rows="3">{{ d.get('bio', '') }}</textarea>{{ erro('bio') }}</label>
+  </fieldset>
+
+  {% if aluno %}
+  <fieldset class="etapa"><legend>Dados escolares</legend>
+    <label>Curso<select name="curso"><option value="">Selecione</option>{% for c in cursos %}<option {{ 'selected' if d.get('curso') == c }}>{{ c }}</option>{% endfor %}</select>{{ erro('curso') }}</label>
+    <label>Turma<input name="turma" maxlength="30" value="{{ d.get('turma', '') }}"></label>
+  </fieldset>
+  {% else %}
+  <fieldset class="etapa"><legend>Dados profissionais</legend>
+    <label>Empresa / organização<input name="empresa" maxlength="80" value="{{ d.get('empresa', '') }}"></label>
+    <label>Cargo<input name="cargo" maxlength="60" value="{{ d.get('cargo', '') }}"></label>
+    <label>Áreas de interesse<small class="dica">Ex.: tecnologia, educação, sustentabilidade</small><input name="interesses" maxlength="150" value="{{ d.get('interesses', '') }}"></label>
+  </fieldset>
+  {% endif %}
+
+  <div class="wizard__nav">
+    <a class="btn-aluno btn-aluno--claro" href="{{ url_for('aluno_inicio' if aluno else 'feed') }}">Cancelar</a>
+    <button class="btn-aluno" type="submit"><i class="bi bi-check2"></i> Salvar alterações</button>
+  </div>
+</form>
+<script>
+document.getElementById('foto').onchange = e => {
+  const a = e.target.files[0]; if (!a) return;
+  if (!/\.(jpe?g|png|webp)$/i.test(a.name) || a.size > 5 * 1048576) { alert('Use JPG, PNG ou WEBP de até 5 MB.'); e.target.value = ''; return; }
+  document.getElementById('avatar').innerHTML = '<img alt="Prévia da foto" src="' + URL.createObjectURL(a) + '">';
+};
+</script>
+{% endblock %}

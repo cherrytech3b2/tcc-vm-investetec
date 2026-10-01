@@ -1,83 +1,71 @@
-import os
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import os, json, re, uuid
+from functools import wraps
+from flask import (Flask, render_template, request, redirect, url_for,
+                   session, jsonify, flash, abort)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "investetec-chave-desenvolvimento")
+app.config["MAX_CONTENT_LENGTH"] = 110 * 1024 * 1024
 
-PROJETOS = [
-    {
-        "id": 1,
-        "titulo": "Smart School",
-        "descricao": "Plataforma inteligente criada para melhorar a organização e a experiência dos alunos no ambiente escolar.",
-        "curso": "Informática para Internet",
-        "categoria": "Informática para Internet",
-        "nivel": "Em desenvolvimento",
-        "tipo": "Integrado",
-        "integrado": True,
-        "cursos_integrados": ["Informática para Internet", "Administração"],
-        "imagem": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
-        "foto_1": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
-        "foto_2": "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=1200&q=80",
-        "foto_3": "https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1200&q=80",
-        "video": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-        "problema": "A dificuldade de organizar informações e atividades escolares em diferentes plataformas.",
-        "solucao": "Uma plataforma centralizada para organizar informações, atividades e recursos utilizados pelos alunos.",
-        "diferencial": "Integra tecnologia, organização escolar e uma interface simples para estudantes.",
-        "publico_alvo": "Escolas, estudantes e instituições de ensino.",
-        "potencial": "Pode ser adaptado para diferentes instituições de ensino e expandido com novos recursos.",
-        "tecnologias": ["HTML", "CSS", "JavaScript", "Flask"],
-        "contato_tipo": "E-mail",
-        "contato": "smartschool@investetec.com"
-    },
-    {
-        "id": 2,
-        "titulo": "EcoTech",
-        "descricao": "Solução tecnológica voltada para conscientização ambiental e acompanhamento do consumo de recursos.",
-        "curso": "Mecatrônica",
-        "categoria": "Mecatrônica",
-        "nivel": "Protótipo",
-        "tipo": "Integrado",
-        "integrado": True,
-        "cursos_integrados": ["Mecatrônica", "Informática para Internet"],
-        "imagem": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80",
-        "foto_1": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80",
-        "foto_2": "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=1200&q=80",
-        "foto_3": "https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=1200&q=80",
-        "video": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-        "problema": "O desperdício de recursos e a dificuldade de acompanhar hábitos de consumo.",
-        "solucao": "Um sistema capaz de coletar dados e apresentar informações sobre consumo de recursos.",
-        "diferencial": "Combina automação, sensores e visualização de dados.",
-        "publico_alvo": "Escolas, empresas e instituições interessadas em sustentabilidade.",
-        "potencial": "Pode ser utilizado para monitoramento ambiental e educação sustentável.",
-        "tecnologias": ["Arduino", "Sensores", "C++", "IoT"],
-        "contato_tipo": "Telefone",
-        "contato": "(16) 99999-1111"
-    },
-    {
-        "id": 3,
-        "titulo": "Gestão Fácil",
-        "descricao": "Sistema desenvolvido para auxiliar pequenos negócios na organização de tarefas, clientes e processos.",
-        "curso": "Administração",
-        "categoria": "Administração",
-        "nivel": "Concluído",
-        "tipo": "Individual",
-        "integrado": False,
-        "cursos_integrados": ["Administração"],
-        "imagem": "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80",
-        "foto_1": "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1200&q=80",
-        "foto_2": "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=1200&q=80",
-        "foto_3": "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80",
-        "video": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-        "problema": "Pequenos negócios muitas vezes utilizam processos manuais para organizar suas atividades.",
-        "solucao": "Uma solução simples para centralizar informações e facilitar a organização empresarial.",
-        "diferencial": "Foco em pequenos negócios e facilidade de utilização.",
-        "publico_alvo": "Microempreendedores e pequenos negócios.",
-        "potencial": "Pode ser expandido para diferentes segmentos empresariais.",
-        "tecnologias": ["Gestão", "Banco de dados", "Análise de processos"],
-        "contato_tipo": "E-mail",
-        "contato": "gestaofacil@investetec.com"
-    }
-]
+BASE = os.path.dirname(os.path.abspath(__file__))
+ARQ = os.path.join(BASE, "projetos_alunos.json")
+ARQ_PERFIS = os.path.join(BASE, "perfis.json")
+CURSOS = ["Informática para Internet", "Mecatrônica", "Administração"]
+NIVEIS = ["Em desenvolvimento", "Protótipo", "Concluído"]
+PROJETOS = []  # sem projetos fictícios: tudo vem do cadastro dos alunos
+
+
+def ler(arq, padrao):
+    try:
+        with open(arq, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return padrao
+
+
+def escrever(arq, dados):
+    with open(arq, "w", encoding="utf-8") as f:
+        json.dump(dados, f, ensure_ascii=False, indent=1)
+
+
+PROJETOS_ALUNOS = ler(ARQ, [])
+PERFIS = ler(ARQ_PERFIS, {})
+
+
+def gravar():
+    escrever(ARQ, PROJETOS_ALUNOS)
+
+
+def chave():
+    return f"{session.get('perfil')}:{session.get('email')}"
+
+
+def disponiveis():
+    return [p for p in PROJETOS_ALUNOS if p.get("status") == "Disponível"]
+
+
+def publico(p):
+    """Versão do projeto que pode ir para a tela (sem dados internos)."""
+    d = {k: v for k, v in p.items() if k not in ("owner", "autoriza", "status")}
+    d["integrantes_lista"] = [l.strip() for l in (p.get("integrantes") or "").splitlines() if l.strip()]
+    d["meu"] = p.get("owner") == session.get("email")
+    return d
+
+
+def so_perfil(*perfis):
+    def deco(f):
+        @wraps(f)
+        def w(*a, **k):
+            if session.get("perfil") not in perfis:
+                return redirect(url_for("login"))
+            return f(*a, **k)
+        return w
+    return deco
+
+
+@app.context_processor
+def injetar():
+    return {"eu": PERFIS.get(chave(), {})}
 
 
 def obter_favoritos():
@@ -92,23 +80,22 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        session["investidor"] = request.form.get("nome") or "Investidor"
-        return redirect(url_for("feed"))
-
+        perfil = request.form.get("perfil")
+        if perfil not in ("aluno", "investidor"):
+            return redirect(url_for("login"))
+        email = request.form.get("email", "").strip().lower()
+        salvo = PERFIS.get(f"{perfil}:{email}", {})
+        nome = salvo.get("nome") or email.split("@")[0].replace(".", " ").title() or "Usuário"
+        session.update(perfil=perfil, email=email, nome=nome, investidor=nome)
+        return redirect(url_for("aluno_inicio" if perfil == "aluno" else "feed"))
     return render_template("login/login.html")
 
 
-@app.route("/feed")
-def feed():
-    investidor = session.get("investidor", "Investidor")
-    favoritos = obter_favoritos()
-
-    return render_template(
-        "feed/feedinvestidor.html",
-        investidor=investidor,
-        projetos=PROJETOS,
-        favoritos=favoritos
-    )
+@app.route("/logout")
+def logout():
+    for k in ("perfil", "email", "nome", "investidor"):
+        session.pop(k, None)
+    return redirect(url_for("login"))
 
 
 @app.route("/register")
@@ -121,46 +108,194 @@ def sobre():
     return render_template("Sobre Nós/sobre.html")
 
 
-@app.route("/favoritos")
-def favoritos():
-    favoritos_ids = obter_favoritos()
-    projetos_favoritos = [
-        projeto for projeto in PROJETOS
-        if projeto["id"] in favoritos_ids
-    ]
+@app.route("/feed")
+@so_perfil("investidor")
+def feed():
+    return render_template("feed.html", modo="investidor", projetos=[publico(p) for p in disponiveis()],
+                           favoritos=obter_favoritos(), cursos=CURSOS, niveis=NIVEIS)
 
-    return render_template(
-        "feed/favoritos.html",
-        projetos_favoritos=projetos_favoritos
-    )
+
+@app.route("/aluno/feed")
+@so_perfil("aluno")
+def aluno_feed():
+    return render_template("feed.html", modo="aluno", projetos=[publico(p) for p in disponiveis()],
+                           favoritos=[], cursos=CURSOS, niveis=NIVEIS)
+
+
+@app.route("/favoritos")
+@so_perfil("investidor")
+def favoritos():
+    ids = obter_favoritos()
+    return render_template("favoritos.html", modo="investidor", favoritos=ids, cursos=CURSOS, niveis=NIVEIS,
+                           projetos=[publico(p) for p in disponiveis() if p["id"] in ids])
 
 
 @app.route("/api/favorito/<int:projeto_id>", methods=["POST"])
+@so_perfil("investidor")
 def alternar_favorito(projeto_id):
-    projeto = next(
-        (projeto for projeto in PROJETOS if projeto["id"] == projeto_id),
-        None
-    )
-
-    if projeto is None:
+    if not any(p["id"] == projeto_id for p in disponiveis()):
         return jsonify({"erro": "Projeto não encontrado"}), 404
-
-    favoritos = obter_favoritos()
-
-    if projeto_id in favoritos:
-        favoritos.remove(projeto_id)
-        favoritado = False
+    fav = obter_favoritos()
+    if projeto_id in fav:
+        fav.remove(projeto_id); ativo = False
     else:
-        favoritos.append(projeto_id)
-        favoritado = True
-
-    session["favoritos"] = favoritos
+        fav.append(projeto_id); ativo = True
+    session["favoritos"] = fav
     session.modified = True
+    return jsonify({"favoritado": ativo, "total": len(fav)})
 
-    return jsonify({
-        "favoritado": favoritado,
-        "total": len(favoritos)
-    })
+
+@app.route("/perfil", methods=["GET", "POST"])
+@so_perfil("aluno", "investidor")
+def perfil():
+    k, d, erros = chave(), dict(PERFIS.get(chave(), {})), {}
+    aluno = session["perfil"] == "aluno"
+    if request.method == "POST":
+        f = request.form
+        for c in ("nome", "telefone", "bio") + (("curso", "turma") if aluno else ("empresa", "cargo", "interesses")):
+            d[c] = f.get(c, "").strip()
+        if not d["nome"]:
+            erros["nome"] = "Informe seu nome."
+        if len(d["bio"]) > 300:
+            erros["bio"] = "A bio deve ter até 300 caracteres."
+        tel = re.sub(r"\D", "", d["telefone"])
+        if tel and len(tel) not in (10, 11):
+            erros["telefone"] = "Telefone inválido. Use DDD + número."
+        if d.get("curso") and d["curso"] not in CURSOS:
+            erros["curso"] = "Selecione um curso da lista."
+        if f.get("remover_foto"):
+            d.pop("foto", None)
+        url, err = guardar(request.files.get("foto"), {"jpg", "jpeg", "png", "webp"}, 5)
+        if err: erros["foto"] = err
+        elif url: d["foto"] = url
+        if erros:
+            flash("Não foi possível salvar. Verifique os campos destacados.", "erro")
+            return render_template("perfil.html", d=d, erros=erros, cursos=CURSOS)
+        PERFIS[k] = d
+        escrever(ARQ_PERFIS, PERFIS)
+        session["nome"] = session["investidor"] = d["nome"]
+        flash("Perfil atualizado.", "ok")
+        return redirect(url_for("perfil"))
+    return render_template("perfil.html", d=d, erros=erros, cursos=CURSOS)
+
+
+def meu_projeto(pid):
+    p = next((x for x in PROJETOS_ALUNOS if x["id"] == pid and x["owner"] == session["email"]), None)
+    if not p:
+        abort(404)  # não é seu = não existe
+    return p
+
+
+def guardar(arq, exts, mb):
+    if not arq or not arq.filename:
+        return None, None
+    ext = arq.filename.rsplit(".", 1)[-1].lower()
+    if ext not in exts:
+        return None, "Formato inválido. Use: " + ", ".join(sorted(exts)).upper() + "."
+    arq.stream.seek(0, 2); n = arq.stream.tell(); arq.stream.seek(0)
+    if n > mb * 1048576:
+        return None, f"Arquivo maior que {mb} MB."
+    pasta = os.path.join(app.static_folder, "uploads")
+    os.makedirs(pasta, exist_ok=True)
+    nome = f"{uuid.uuid4().hex}.{ext}"
+    arq.save(os.path.join(pasta, nome))
+    return url_for("static", filename=f"uploads/{nome}"), None
+
+
+def validar(p, enviar):
+    e = {}
+    if not p.get("titulo"):
+        e["titulo"] = "Informe o nome do projeto."
+    if p.get("contato_email") and not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", p["contato_email"]):
+        e["contato_email"] = "E-mail inválido."
+    tel = re.sub(r"\D", "", p.get("contato_telefone", ""))
+    if tel and len(tel) not in (10, 11):
+        e["contato_telefone"] = "Telefone inválido. Use DDD + número."
+    if not enviar:
+        return e
+    for c, m in {"descricao": "Informe a descrição resumida.", "descricao_completa": "Informe a descrição completa.",
+                 "responsavel": "Informe o responsável.", "problema": "Informe o problema.",
+                 "solucao": "Informe a solução.", "diferencial": "Informe o diferencial.",
+                 "publico_alvo": "Informe o público-alvo.", "potencial": "Informe o potencial."}.items():
+        if not p.get(c):
+            e[c] = m
+    if p.get("categoria") not in CURSOS:
+        e["categoria"] = "Selecione o curso principal."
+    if p.get("nivel") not in NIVEIS:
+        e["nivel"] = "Selecione o estágio do projeto."
+    if not p.get("tecnologias"):
+        e["tecnologias"] = "Informe ao menos uma tecnologia."
+    if p.get("tipo") == "Integrado" and not p.get("cursos_integrados"):
+        e["cursos_integrados"] = "Selecione os cursos envolvidos."
+    for i in (1, 2, 3):
+        if not p.get(f"foto_{i}") and f"foto{i}" not in e:
+            e[f"foto{i}"] = f"Envie a foto {i}."
+    if not p.get("video") and "video" not in e:
+        e["video"] = "Envie o vídeo."
+    if not p.get("contato_email") and not tel:
+        e["contato"] = "Informe ao menos um contato (e-mail ou telefone)."
+    if not p.get("autoriza"):
+        e["autoriza"] = "Confirme a autorização para divulgar o contato."
+    return e
+
+
+@app.route("/aluno")
+@so_perfil("aluno")
+def aluno_inicio():
+    meus = [p for p in PROJETOS_ALUNOS if p["owner"] == session["email"]]
+    return render_template("aluno/aluno_inicio.html", projetos=meus)
+
+
+@app.route("/aluno/novo", methods=["GET", "POST"])
+@app.route("/aluno/editar/<int:pid>", methods=["GET", "POST"])
+@so_perfil("aluno")
+def aluno_form(pid=None):
+    novo = pid is None
+    p = {"owner": session["email"], "status": "Rascunho", "tipo": "Individual"} if novo else meu_projeto(pid)
+    erros = {}
+    if request.method == "POST":
+        f, enviar = request.form, request.form.get("acao") == "enviar"
+        for c in ("titulo", "descricao", "descricao_completa", "categoria", "tipo", "nivel", "responsavel",
+                  "turma", "integrantes", "problema", "solucao", "diferencial", "publico_alvo", "potencial",
+                  "contato_email", "contato_telefone"):
+            p[c] = f.get(c, "").strip()
+        p["curso"] = p["categoria"]
+        p["integrado"] = p["tipo"] == "Integrado"
+        p["cursos_integrados"] = f.getlist("cursos_integrados") if p["integrado"] else [p["categoria"]]
+        p["tecnologias"] = [t.strip() for t in f.get("tecnologias", "").split(",") if t.strip()]
+        p["autoriza"] = bool(f.get("autoriza"))
+        for i in (1, 2, 3):
+            url, err = guardar(request.files.get(f"foto{i}"), {"jpg", "jpeg", "png", "webp"}, 5)
+            if err: erros[f"foto{i}"] = err
+            elif url: p[f"foto_{i}"] = url
+        url, err = guardar(request.files.get("video"), {"mp4", "webm", "mov"}, 100)
+        if err: erros["video"] = err
+        elif url: p["video"] = url
+        p["imagem"] = p.get("foto_1", "")
+        p["contato_tipo"] = "E-mail" if p["contato_email"] else "Telefone"
+        p["contato"] = p["contato_email"] or p["contato_telefone"]
+        erros.update(validar(p, enviar))
+        if erros:
+            flash("Seu projeto ainda possui informações obrigatórias pendentes." if enviar
+                  else "Não foi possível salvar. Verifique os campos destacados.", "erro")
+            return render_template("aluno/aluno_form.html", p=p, erros=erros, cursos=CURSOS, niveis=NIVEIS)
+        p["status"] = "Disponível" if enviar else "Rascunho"
+        if novo:
+            p["id"] = max([x["id"] for x in PROJETOS + PROJETOS_ALUNOS] + [99]) + 1
+            PROJETOS_ALUNOS.append(p)
+        gravar()
+        flash("Projeto enviado com sucesso." if enviar else "Projeto salvo como rascunho.", "ok")
+        return redirect(url_for("aluno_inicio"))
+    return render_template("aluno/aluno_form.html", p=p, erros=erros, cursos=CURSOS, niveis=NIVEIS)
+
+
+@app.route("/aluno/apagar/<int:pid>", methods=["POST"])
+@so_perfil("aluno")
+def aluno_apagar(pid):
+    PROJETOS_ALUNOS.remove(meu_projeto(pid))
+    gravar()
+    flash("Projeto apagado.", "ok")
+    return redirect(url_for("aluno_inicio"))
 
 
 if __name__ == "__main__":

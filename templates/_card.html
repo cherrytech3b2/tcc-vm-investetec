@@ -1,0 +1,24 @@
+{% macro card(p, fav, modo) %}
+<article class="card" data-id="{{ p.id }}"
+  data-texto="{{ ((p.titulo or '') ~ ' ' ~ (p.descricao or '') ~ ' ' ~ (p.tecnologias or [])|join(' '))|lower }}"
+  data-categoria="{{ p.categoria }}" data-nivel="{{ p.nivel }}" data-tipo="{{ p.tipo }}">
+  <div class="card__thumb">
+    {% if p.imagem %}<img src="{{ p.imagem }}" alt="Foto do projeto {{ p.titulo }}">{% else %}<span class="card__thumb-ph"><i class="bi bi-image"></i></span>{% endif %}
+    <span class="card__thumb-label">{{ (p.nivel or 'PROJETO')|upper }}</span>
+    {% if modo == 'investidor' %}
+    <button class="favorite-button {{ 'favorite-button--active' if fav }}" type="button" data-fav="{{ p.id }}" aria-label="Favoritar {{ p.titulo }}"><i class="bi {{ 'bi-heart-fill' if fav else 'bi-heart' }}"></i></button>
+    {% endif %}
+  </div>
+  <div class="card__body">
+    <div class="card__category"><i class="bi bi-bookmark-fill"></i> {{ p.categoria }}</div>
+    <h4 class="card__title">{{ p.titulo }}</h4>
+    <p class="card__desc">{{ p.descricao }}</p>
+    <div class="card__badges">
+      <span class="card__tag">{{ p.tipo }}</span>
+      {% for t in (p.tecnologias or [])[:2] %}<span class="card__tag card__tag--integrado">{{ t }}</span>{% endfor %}
+      {% if p.meu %}<span class="card__tag card__tag--meu">Meu projeto</span>{% endif %}
+    </div>
+  </div>
+  <button class="card__open" type="button" data-abrir="{{ p.id }}"><span>Ver projeto</span><i class="bi bi-arrow-right"></i></button>
+</article>
+{% endmacro %}
