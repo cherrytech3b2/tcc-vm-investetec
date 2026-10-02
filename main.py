@@ -15,25 +15,14 @@ NIVEIS = ["Em desenvolvimento", "Protótipo", "Concluído"]
 PROJETOS = []  # sem projetos fictícios: tudo vem do cadastro dos alunos
 
 
-def ler(arq, padrao):
-    try:
-        with open(arq, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return padrao
+from app.repositories.firebase_repository import UserRepository, ProjectRepository
 
-
-def escrever(arq, dados):
-    with open(arq, "w", encoding="utf-8") as f:
-        json.dump(dados, f, ensure_ascii=False, indent=1)
-
-
-PROJETOS_ALUNOS = ler(ARQ, [])
-PERFIS = ler(ARQ_PERFIS, {})
-
+user_repo = UserRepository()
+project_repo = ProjectRepository()
 
 def gravar():
-    escrever(ARQ, PROJETOS_ALUNOS)
+    pass # Managed by Firebase automatically upon save
+
 
 
 def chave():
@@ -41,7 +30,7 @@ def chave():
 
 
 def disponiveis():
-    return [p for p in PROJETOS_ALUNOS if p.get("status") == "Disponível"]
+    return project_repo.get_all_available()
 
 
 def publico(p):
@@ -65,7 +54,10 @@ def so_perfil(*perfis):
 
 @app.context_processor
 def injetar():
-    return {"eu": PERFIS.get(chave(), {})}
+    eu_data = {}
+    if session.get("email") and session.get("perfil"):
+        eu_data = user_repo.get_by_email(session["email"], session["perfil"]) or {}
+    return {"eu": eu_data}
 
 
 def obter_favoritos():
@@ -84,7 +76,7 @@ def login():
         if perfil not in ("aluno", "investidor"):
             return redirect(url_for("login"))
         email = request.form.get("email", "").strip().lower()
-        salvo = PERFIS.get(f"{perfil}:{email}", {})
+        salvo = user_repo.get_by_email(email, perfil) or {}
         nome = salvo.get("nome") or email.split("@")[0].replace(".", " ").title() or "Usuário"
         session.update(perfil=perfil, email=email, nome=nome, investidor=nome)
         return redirect(url_for("aluno_inicio" if perfil == "aluno" else "feed"))
@@ -130,7 +122,7 @@ def favoritos():
                            projetos=[publico(p) for p in disponiveis() if p["id"] in ids])
 
 
-@app.route("/api/favorito/<int:projeto_id>", methods=["POST"])
+@app.route("/api/favorito/<string:projeto_id>", methods=["POST"])
 @so_perfil("investidor")
 def alternar_favorito(projeto_id):
     if not any(p["id"] == projeto_id for p in disponiveis()):
@@ -148,8 +140,11 @@ def alternar_favorito(projeto_id):
 @app.route("/perfil", methods=["GET", "POST"])
 @so_perfil("aluno", "investidor")
 def perfil():
-    k, d, erros = chave(), dict(PERFIS.get(chave(), {})), {}
-    aluno = session["perfil"] == "aluno"
+    email = session.get("email")
+    perfil_str = session.get("perfil")
+    d = user_repo.get_by_email(email, perfil_str) or {}
+    erros = {}
+    aluno = perfil_str == "aluno"
     if request.method == "POST":
         f = request.form
         for c in ("nome", "telefone", "bio") + (("curso", "turma") if aluno else ("empresa", "cargo", "interesses")):
@@ -171,8 +166,9 @@ def perfil():
         if erros:
             flash("Não foi possível salvar. Verifique os campos destacados.", "erro")
             return render_template("perfil.html", d=d, erros=erros, cursos=CURSOS)
-        PERFIS[k] = d
-        escrever(ARQ_PERFIS, PERFIS)
+        d["email"] = email
+        d["perfil"] = perfil_str
+        user_repo.save(d)
         session["nome"] = session["investidor"] = d["nome"]
         flash("Perfil atualizado.", "ok")
         return redirect(url_for("perfil"))
@@ -180,8 +176,8 @@ def perfil():
 
 
 def meu_projeto(pid):
-    p = next((x for x in PROJETOS_ALUNOS if x["id"] == pid and x["owner"] == session["email"]), None)
-    if not p:
+    p = project_repo.get_by_id(str(pid))
+    if not p or p.get("owner_email", p.get("owner")) != session["email"]:
         abort(404)  # não é seu = não existe
     return p
 
@@ -242,16 +238,16 @@ def validar(p, enviar):
 @app.route("/aluno")
 @so_perfil("aluno")
 def aluno_inicio():
-    meus = [p for p in PROJETOS_ALUNOS if p["owner"] == session["email"]]
+    meus = project_repo.get_by_owner(session["email"])
     return render_template("aluno/aluno_inicio.html", projetos=meus)
 
 
 @app.route("/aluno/novo", methods=["GET", "POST"])
-@app.route("/aluno/editar/<int:pid>", methods=["GET", "POST"])
+@app.route("/aluno/editar/<string:pid>", methods=["GET", "POST"])
 @so_perfil("aluno")
 def aluno_form(pid=None):
     novo = pid is None
-    p = {"owner": session["email"], "status": "Rascunho", "tipo": "Individual"} if novo else meu_projeto(pid)
+    p = {"owner_email": session["email"], "owner": session["email"], "status": "Rascunho", "tipo": "Individual"} if novo else meu_projeto(pid)
     erros = {}
     if request.method == "POST":
         f, enviar = request.form, request.form.get("acao") == "enviar"
@@ -281,19 +277,17 @@ def aluno_form(pid=None):
             return render_template("aluno/aluno_form.html", p=p, erros=erros, cursos=CURSOS, niveis=NIVEIS)
         p["status"] = "Disponível" if enviar else "Rascunho"
         if novo:
-            p["id"] = max([x["id"] for x in PROJETOS + PROJETOS_ALUNOS] + [99]) + 1
-            PROJETOS_ALUNOS.append(p)
-        gravar()
+            p["id"] = uuid.uuid4().hex
+        project_repo.save(p)
         flash("Projeto enviado com sucesso." if enviar else "Projeto salvo como rascunho.", "ok")
         return redirect(url_for("aluno_inicio"))
     return render_template("aluno/aluno_form.html", p=p, erros=erros, cursos=CURSOS, niveis=NIVEIS)
 
 
-@app.route("/aluno/apagar/<int:pid>", methods=["POST"])
+@app.route("/aluno/apagar/<string:pid>", methods=["POST"])
 @so_perfil("aluno")
 def aluno_apagar(pid):
-    PROJETOS_ALUNOS.remove(meu_projeto(pid))
-    gravar()
+    project_repo.delete(str(pid))
     flash("Projeto apagado.", "ok")
     return redirect(url_for("aluno_inicio"))
 
