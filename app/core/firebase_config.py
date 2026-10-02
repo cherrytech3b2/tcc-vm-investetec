@@ -19,7 +19,7 @@ def init_firebase():
 
 def get_db():
     try:
-        return firestore.client()
+        firebase_admin.get_app()
     except ValueError:
         init_firebase()
-        return firestore.client()
+    return firestore.client()
