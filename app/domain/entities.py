@@ -4,15 +4,13 @@ from typing import List, Optional
 @dataclass
 class User:
     email: str
-    perfil: str # 'aluno' ou 'investidor'
+    perfil: str 
     nome: str
     telefone: Optional[str] = None
     bio: Optional[str] = None
     foto: Optional[str] = None
-    # Específico aluno
     curso: Optional[str] = None
     turma: Optional[str] = None
-    # Específico investidor
     empresa: Optional[str] = None
     cargo: Optional[str] = None
     interesses: Optional[str] = None

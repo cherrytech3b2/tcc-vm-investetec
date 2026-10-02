@@ -46,7 +46,7 @@ def perfil():
         d["perfil"] = perfil_str
         user_repo.save(d)
         
-        session["nome"] = session["investidor"] = d["nome"]
+        session["nome"] = session["empresa"] = d["nome"]
         flash("Perfil atualizado com sucesso.", "ok")
         return redirect(url_for("user_bp.perfil"))
         

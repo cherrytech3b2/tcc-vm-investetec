@@ -1,11 +1,4 @@
-# Dev environment
-pip
-autopep8
-
-# App
 flask
-firebase-admin
-
 firebase-admin
 gunicorn
 python-dotenv

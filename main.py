@@ -79,19 +79,19 @@ def index():
 def login():
     if request.method == "POST":
         perfil = request.form.get("perfil")
-        if perfil not in ("aluno", "investidor"):
+        if perfil not in ("aluno", "empresa"):
             return redirect(url_for("login"))
         email = request.form.get("email", "").strip().lower()
         salvo = user_repo.get_by_email(email, perfil) or {}
         nome = salvo.get("nome") or email.split("@")[0].replace(".", " ").title() or "Usuário"
-        session.update(perfil=perfil, email=email, nome=nome, investidor=nome)
+        session.update(perfil=perfil, email=email, nome=nome, empresa=nome)
         return redirect(url_for("aluno_inicio" if perfil == "aluno" else "feed"))
     return render_template("login/login.html")
 
 
 @app.route("/logout")
 def logout():
-    for k in ("perfil", "email", "nome", "investidor"):
+    for k in ("perfil", "email", "nome", "empresa"):
         session.pop(k, None)
     return redirect(url_for("login"))
 
@@ -107,9 +107,9 @@ def sobre():
 
 
 @app.route("/feed")
-@so_perfil("investidor")
+@so_perfil("empresa")
 def feed():
-    return render_template("feed.html", modo="investidor", projetos=[publico(p) for p in disponiveis()],
+    return render_template("feed.html", modo="empresa", projetos=[publico(p) for p in disponiveis()],
                            favoritos=obter_favoritos(), cursos=CURSOS, niveis=NIVEIS)
 
 
@@ -121,15 +121,15 @@ def aluno_feed():
 
 
 @app.route("/favoritos")
-@so_perfil("investidor")
+@so_perfil("empresa")
 def favoritos():
     ids = obter_favoritos()
-    return render_template("favoritos.html", modo="investidor", favoritos=ids, cursos=CURSOS, niveis=NIVEIS,
+    return render_template("favoritos.html", modo="empresa", favoritos=ids, cursos=CURSOS, niveis=NIVEIS,
                            projetos=[publico(p) for p in disponiveis() if p["id"] in ids])
 
 
 @app.route("/api/favorito/<string:projeto_id>", methods=["POST"])
-@so_perfil("investidor")
+@so_perfil("empresa")
 def alternar_favorito(projeto_id):
     if not any(p["id"] == projeto_id for p in disponiveis()):
         return jsonify({"erro": "Projeto não encontrado"}), 404
