@@ -15,7 +15,7 @@ def init_firebase():
                 cred = credentials.Certificate("serviceAccountKey.json")
                 firebase_admin.initialize_app(cred)
             except Exception as e:
-                print("Aviso: Firebase não foi inicializado corretamente. Configure FIREBASE_CREDENTIALS.")
+                raise RuntimeError(f"Erro ao inicializar Firebase: Configure a variável FIREBASE_CREDENTIALS ou crie o arquivo serviceAccountKey.json. Detalhes: {str(e)}")
 
 def get_db():
     try:
