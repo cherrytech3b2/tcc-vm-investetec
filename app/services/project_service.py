@@ -1,43 +1,38 @@
-from app.repositories.project_repository import ProjectRepository
-from app.models.project import Project
+import uuid
+import re
+from app.repositories.firebase_repository import ProjectRepository
 
 class ProjectService:
     def __init__(self):
         self.project_repo = ProjectRepository()
 
-    def get_all_projects(self):
-        return self.project_repo.get_all_projects()
+    def create_or_update_project(self, project_data: dict, is_new: bool, is_submit: bool) -> tuple[dict, dict]:
+        erros = {}
+        
+        # Validações de negócio
+        if not project_data.get("titulo"):
+            erros["titulo"] = "Informe o nome do projeto."
+            
+        contato_email = project_data.get("contato_email")
+        if contato_email and not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", contato_email):
+            erros["contato_email"] = "E-mail inválido."
+            
+        # Adicione aqui mais validações do negócio (ex: número máximo de integrantes, etc.)
 
-    def add_project(self, data: dict):
-        project = Project(
-            id=None,
-            name=data.get('name'),
-            description=data.get('description'),
-            course=data.get('course'),
-            status=data.get('status'),
-            has_interest=data.get('has_interest', False),
-            is_favorite=data.get('is_favorite', False),
-            full_name=data.get('full_name'),
-            email=data.get('email'),
-            password=data.get('password'),
-            account_type=data.get('account_type'),
-            accepted_terms=data.get('accepted_terms', False)
-        )
-        return self.project_repo.add_project(project)
+        if not erros:
+            # Regras de Negócio de Status e ID
+            project_data["status"] = "Disponível" if is_submit else "Rascunho"
+            
+            if is_new:
+                project_data["id"] = uuid.uuid4().hex
+                
+            self.project_repo.save(project_data)
+            
+        return project_data, erros
 
-    def update_project(self, project_id: str, data: dict):
-        project = Project(
-            id=project_id,
-            name=data.get('name'),
-            description=data.get('description'),
-            course=data.get('course'),
-            status=data.get('status'),
-            has_interest=data.get('has_interest', False),
-            is_favorite=data.get('is_favorite', False),
-            full_name=data.get('full_name'),
-            email=data.get('email'),
-            password=data.get('password'),
-            account_type=data.get('account_type'),
-            accepted_terms=data.get('accepted_terms', False)
-        )
-        return self.project_repo.update_project(project_id, project)
+    def delete_project(self, project_id: str, owner_email: str) -> bool:
+        p = self.project_repo.get_by_id(project_id)
+        if p and p.get("owner_email", p.get("owner")) == owner_email:
+            self.project_repo.delete(project_id)
+            return True
+        return False
