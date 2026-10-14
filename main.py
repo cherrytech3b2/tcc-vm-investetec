@@ -85,7 +85,7 @@ def login():
         salvo = user_repo.get_by_email(email, perfil) or {}
         nome = salvo.get("nome") or email.split("@")[0].replace(".", " ").title() or "Usuário"
         session.update(perfil=perfil, email=email, nome=nome, empresa=nome)
-        return redirect(url_for("aluno_inicio" if perfil == "aluno" else "feed"))
+        return redirect(url_for("project_bp.aluno_inicio" if perfil == "aluno" else "feed"))
     return render_template("login/login.html")
 
 

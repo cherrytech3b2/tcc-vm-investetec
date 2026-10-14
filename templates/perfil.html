@@ -37,7 +37,7 @@
   {% endif %}
 
   <div class="wizard__nav">
-    <a class="btn-aluno btn-aluno--claro" href="{{ url_for('aluno_inicio' if aluno else 'feed') }}">Cancelar</a>
+    <a class="btn-aluno btn-aluno--claro" href="{{ url_for('project_bp.aluno_inicio' if aluno else 'feed') }}">Cancelar</a>
     <button class="btn-aluno" type="submit"><i class="bi bi-check2"></i> Salvar alterações</button>
   </div>
 </form>

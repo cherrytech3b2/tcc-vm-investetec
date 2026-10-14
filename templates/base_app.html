@@ -20,14 +20,14 @@
     </div>
     <nav class="sidebar__nav" aria-label="Menu principal">
       {% if session.perfil == 'aluno' %}
-      <a href="{{ url_for('aluno_inicio') }}" class="nav-item {{ 'nav-item--active' if ep == 'aluno_inicio' }}"><i class="bi bi-house-door-fill nav-item__icon"></i><span>Meus projetos</span></a>
-      <a href="{{ url_for('aluno_form') }}" class="nav-item {{ 'nav-item--active' if ep == 'aluno_form' }}"><i class="bi bi-plus-square-fill nav-item__icon"></i><span>Novo projeto</span></a>
+      <a href="{{ url_for('project_bp.aluno_inicio') }}" class="nav-item {{ 'nav-item--active' if ep == 'project_bp.aluno_inicio' }}"><i class="bi bi-house-door-fill nav-item__icon"></i><span>Meus projetos</span></a>
+      <a href="{{ url_for('project_bp.aluno_form') }}" class="nav-item {{ 'nav-item--active' if ep == 'project_bp.aluno_form' }}"><i class="bi bi-plus-square-fill nav-item__icon"></i><span>Novo projeto</span></a>
       <a href="{{ url_for('aluno_feed') }}" class="nav-item {{ 'nav-item--active' if ep == 'aluno_feed' }}"><i class="bi bi-grid-fill nav-item__icon"></i><span>Feed de projetos</span></a>
       {% else %}
       <a href="{{ url_for('feed') }}" class="nav-item {{ 'nav-item--active' if ep == 'feed' }}"><i class="bi bi-house-door-fill nav-item__icon"></i><span>Início</span></a>
       <a href="{{ url_for('favoritos') }}" class="nav-item {{ 'nav-item--active' if ep == 'favoritos' }}"><i class="bi bi-heart-fill nav-item__icon"></i><span>Favoritos</span></a>
       {% endif %}
-      <a href="{{ url_for('perfil') }}" class="nav-item {{ 'nav-item--active' if ep == 'perfil' }}"><i class="bi bi-person-fill nav-item__icon"></i><span>Perfil</span></a>
+      <a href="{{ url_for('user_bp.perfil') }}" class="nav-item {{ 'nav-item--active' if ep == 'user_bp.perfil' }}"><i class="bi bi-person-fill nav-item__icon"></i><span>Perfil</span></a>
       <div class="nav-sep" aria-hidden="true"></div>
       <a href="{{ url_for('logout') }}" class="nav-item"><i class="bi bi-box-arrow-left nav-item__icon"></i><span>Sair</span></a>
     </nav>
@@ -37,7 +37,7 @@
   <main class="main">
     <header class="topbar">
       {% block busca %}{% endblock %}
-      <a href="{{ url_for('perfil') }}" class="topbar__user" aria-label="Abrir meu perfil">
+      <a href="{{ url_for('user_bp.perfil') }}" class="topbar__user" aria-label="Abrir meu perfil">
         <div class="topbar__user-text"><strong>{{ session.nome }}</strong><span>{{ 'Aluno' if session.perfil == 'aluno' else 'Investidor' }}</span></div>
         <div class="topbar__avatar">{% if eu.foto %}<img src="{{ eu.foto }}" alt="">{% else %}{{ session.nome[:2]|upper }}{% endif %}</div>
       </a>

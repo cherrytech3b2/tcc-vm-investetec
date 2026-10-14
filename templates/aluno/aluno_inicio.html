@@ -9,7 +9,7 @@
 <section class="projetos">
   <div class="projetos__heading">
     <h3 class="projetos__titulo">Meus projetos</h3>
-    <a class="btn-aluno" href="{{ url_for('aluno_form') }}"><i class="bi bi-plus-lg"></i> Novo projeto</a>
+    <a class="btn-aluno" href="{{ url_for('project_bp.aluno_form') }}"><i class="bi bi-plus-lg"></i> Novo projeto</a>
   </div>
   {% if projetos %}
   <div class="projetos__grid">
@@ -25,8 +25,8 @@
         <p class="card__desc">{{ p.descricao or 'Descrição do projeto…' }}</p>
       </div>
       <div class="card__acoes">
-        <a class="btn-aluno" href="{{ url_for('aluno_form', pid=p.id) }}">{{ 'Continuar preenchimento' if p.status == 'Rascunho' else 'Editar' }}</a>
-        <form method="post" action="{{ url_for('aluno_apagar', pid=p.id) }}" onsubmit="return confirm('Apagar este projeto?');">
+        <a class="btn-aluno" href="{{ url_for('project_bp.aluno_form', pid=p.id) }}">{{ 'Continuar preenchimento' if p.status == 'Rascunho' else 'Editar' }}</a>
+        <form method="post" action="{{ url_for('project_bp.aluno_apagar', pid=p.id) }}" onsubmit="return confirm('Apagar este projeto?');">
           <button class="btn-aluno btn-aluno--perigo" type="submit">Apagar</button>
         </form>
       </div>
