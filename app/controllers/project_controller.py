@@ -3,6 +3,7 @@ import uuid
 import re
 from app.repositories.firebase_repository import ProjectRepository
 from app.services.project_service import ProjectService
+from app.core.uploads import enviar_arquivo
 
 project_bp = Blueprint('project_bp', __name__)
 project_repo = ProjectRepository()
@@ -50,7 +51,18 @@ def aluno_form(pid=None):
         p["cursos_integrados"] = f.getlist("cursos_integrados") if p["integrado"] else [p["categoria"]]
         p["tecnologias"] = [t.strip() for t in f.get("tecnologias", "").split(",") if t.strip()]
         p["autoriza"] = bool(f.get("autoriza"))
-        
+        erros_upload = {}
+        for campo, nome_form, tipo in (("foto_1", "foto1", "foto"), ("foto_2", "foto2", "foto"), ("foto_3", "foto3", "foto"), ("video", "video", "video")):
+            url, erro = enviar_arquivo(request.files.get(nome_form), tipo)
+            if url:
+                p[campo] = url
+            if erro:
+                erros_upload[nome_form] = erro
+ 
+        if erros_upload:
+            flash("Verifique os arquivos enviados.", "erro")
+            return render_template("aluno/aluno_form.html", p=p, erros=erros_upload, cursos=CURSOS, niveis=NIVEIS)
+ 
         # O Controller agora delega a regra de negócio para o Service
         p, erros = project_service.create_or_update_project(p, is_new=novo, is_submit=enviar)
         

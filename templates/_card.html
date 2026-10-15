@@ -3,7 +3,7 @@
   data-texto="{{ ((p.titulo or '') ~ ' ' ~ (p.descricao or '') ~ ' ' ~ (p.tecnologias or [])|join(' '))|lower }}"
   data-categoria="{{ p.categoria }}" data-nivel="{{ p.nivel }}" data-tipo="{{ p.tipo }}">
   <div class="card__thumb">
-    {% if p.imagem %}<img src="{{ p.imagem }}" alt="Foto do projeto {{ p.titulo }}">{% else %}<span class="card__thumb-ph"><i class="bi bi-image"></i></span>{% endif %}
+    {% if p.foto_1 %}<img src="{{ p.foto_1 }}" alt="Foto do projeto {{ p.titulo }}">{% else %}<span class="card__thumb-ph"><i class="bi bi-image"></i></span>{% endif %}
     <span class="card__thumb-label">{{ (p.nivel or 'PROJETO')|upper }}</span>
     {% if modo == 'investidor' %}
     <button class="favorite-button {{ 'favorite-button--active' if fav }}" type="button" data-fav="{{ p.id }}" aria-label="Favoritar {{ p.titulo }}"><i class="bi {{ 'bi-heart-fill' if fav else 'bi-heart' }}"></i></button>
