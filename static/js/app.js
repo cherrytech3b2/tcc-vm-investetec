@@ -83,9 +83,9 @@
   }
 
   document.addEventListener('click', e => {
-    const a = e.target.closest('[data-abrir]'); if (a) return abrir(+a.dataset.abrir);
+    const a = e.target.closest('[data-abrir]'); if (a) return abrir(a.dataset.abrir);
     if (e.target.closest('[data-fechar]')) return fechar();
-    const f = e.target.closest('[data-fav]'); if (f) alternar(+f.dataset.fav);
+    const f = e.target.closest('[data-fav]'); if (f) alternar(f.dataset.fav);
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') fechar(); });
 })();

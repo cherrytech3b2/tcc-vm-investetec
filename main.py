@@ -2,6 +2,10 @@ import os, json, re, uuid
 from functools import wraps
 from flask import (Flask, render_template, request, redirect, url_for,
                    session, jsonify, flash, abort)
+from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "investetec-chave-desenvolvimento")
@@ -63,6 +67,7 @@ def injetar():
     eu_data = {}
     if session.get("email") and session.get("perfil"):
         eu_data = user_repo.get_by_email(session["email"], session["perfil"]) or {}
+        eu_data.pop("senha_hash", None)
     return {"eu": eu_data}
 
 
@@ -82,8 +87,12 @@ def login():
         if perfil not in ("aluno", "empresa"):
             return redirect(url_for("login"))
         email = request.form.get("email", "").strip().lower()
-        salvo = user_repo.get_by_email(email, perfil) or {}
-        nome = salvo.get("nome") or email.split("@")[0].replace(".", " ").title() or "Usuário"
+        senha = request.form.get("senha", "")
+        salvo = user_repo.get_by_email(email, perfil)
+        if not salvo or not salvo.get("senha_hash") or not check_password_hash(salvo["senha_hash"], senha):
+            flash("E-mail ou senha incorretos.", "erro")
+            return redirect(url_for("login"))
+        nome = salvo.get("nome") or email.split("@")[0].replace(".", " ").title()
         session.update(perfil=perfil, email=email, nome=nome, empresa=nome)
         return redirect(url_for("project_bp.aluno_inicio" if perfil == "aluno" else "feed"))
     return render_template("login/login.html")
@@ -96,10 +105,42 @@ def logout():
     return redirect(url_for("login"))
 
 
-@app.route("/register")
+@app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template("login/register.html")
+    if request.method == "POST":
+        perfil = request.form.get("perfil")
+        nome = request.form.get("nome", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        senha = request.form.get("senha", "")
+        confirma = request.form.get("confirma_senha", "")
 
+        erro = None
+        if perfil not in ("aluno", "empresa"):
+            erro = "Escolha se você é aluno ou investidor."
+        elif not nome:
+            erro = "Informe seu nome."
+        elif not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email):
+            erro = "E-mail inválido."
+        elif len(senha) < 6:
+            erro = "A senha deve ter pelo menos 6 caracteres."
+        elif senha != confirma:
+            erro = "As senhas não conferem."
+        elif user_repo.get_by_email(email, perfil):
+            erro = "Já existe uma conta com este e-mail."
+
+        if erro:
+            flash(erro, "erro")
+            return redirect(url_for("register"))
+
+        user_repo.save({
+            "nome": nome,
+            "email": email,
+            "perfil": perfil,
+            "senha_hash": generate_password_hash(senha),
+        })
+        flash("Cadastro realizado! Entre com seu e-mail e senha.", "sucesso")
+        return redirect(url_for("login"))
+    return render_template("login/register.html")
 
 @app.route("/sobre")
 def sobre():
@@ -109,7 +150,7 @@ def sobre():
 @app.route("/feed")
 @so_perfil("empresa")
 def feed():
-    return render_template("feed.html", modo="empresa", projetos=[publico(p) for p in disponiveis()],
+    return render_template("feed.html", modo="investidor", projetos=[publico(p) for p in disponiveis()],
                            favoritos=obter_favoritos(), cursos=CURSOS, niveis=NIVEIS)
 
 
@@ -124,7 +165,7 @@ def aluno_feed():
 @so_perfil("empresa")
 def favoritos():
     ids = obter_favoritos()
-    return render_template("favoritos.html", modo="empresa", favoritos=ids, cursos=CURSOS, niveis=NIVEIS,
+    return render_template("favoritos.html", modo="investidor", favoritos=ids, cursos=CURSOS, niveis=NIVEIS,
                            projetos=[publico(p) for p in disponiveis() if p["id"] in ids])
 
 
