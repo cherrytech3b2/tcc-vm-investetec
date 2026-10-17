@@ -195,7 +195,7 @@
           <hr>
         </div>
 
-        <button type="button" class="btn-google">
+       <button type="button" id="btn-google" class="btn-google">
           <svg viewBox="0 0 24 24">
             <path fill="#4285F4"
               d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.47c-.28 1.5-1.13 2.78-2.4 3.63v3.02h3.88c2.27-2.09 3.57-5.17 3.57-8.84z" />
@@ -230,6 +230,39 @@ document.getElementById('role-empresa').addEventListener('click', function () {
   document.getElementById('perfil').value = 'empresa';
 });
   </script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const app = initializeApp({
+    apiKey: "AIzaSyCY-xerBTuvjSVkbUzKzyRcyMK5KhYjD3k",
+    authDomain: "tcc-dados-deborah.firebaseapp.com",
+    projectId: "tcc-dados-deborah",
+    appId: "1:401610918602:web:25beeb2ea3c326802d0233"
+  });
+  const auth = getAuth(app);
+
+  document.getElementById('btn-google').addEventListener('click', async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      const result = await signInWithPopup(auth, provider);
+      const idToken = await result.user.getIdToken();
+      const perfil = document.getElementById('perfil').value;
+      const r = await fetch('/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken, perfil })
+      });
+      const d = await r.json();
+      if (d.ok) window.location = d.redirect;
+      else alert(d.erro || 'Não foi possível entrar com o Google.');
+    } catch (e) {
+      console.error(e);
+      alert('Login com Google cancelado ou falhou.');
+    }
+  });
+</script>
 </body>
 
 </html>

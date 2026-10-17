@@ -4,6 +4,7 @@ from flask import (Flask, render_template, request, redirect, url_for,
                    session, jsonify, flash, abort)
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
+from firebase_admin import auth as fb_auth
 
 load_dotenv()
 
@@ -141,6 +142,34 @@ def register():
         flash("Cadastro realizado! Entre com seu e-mail e senha.", "sucesso")
         return redirect(url_for("login"))
     return render_template("login/register.html")
+
+@app.route("/auth/google", methods=["POST"])
+def auth_google():
+    dados = request.get_json(silent=True) or {}
+    perfil = dados.get("perfil")
+    if perfil not in ("aluno", "empresa"):
+        return jsonify(ok=False, erro="Escolha aluno ou empresa."), 400
+    try:
+        info = fb_auth.verify_id_token(dados.get("idToken", ""), clock_skew_seconds=10)
+    except Exception as e:
+        print("Erro token Google:", e)
+        return jsonify(ok=False, erro="Não foi possível validar o login do Google."), 401
+
+    email = (info.get("email") or "").lower()
+    if not email or not info.get("email_verified"):
+        return jsonify(ok=False, erro="E-mail do Google não verificado."), 400
+
+    salvo = user_repo.get_by_email(email, perfil)
+    if not salvo:
+        nome = info.get("name") or email.split("@")[0]
+        user_repo.save({"nome": nome, "email": email, "perfil": perfil, "provedor": "google"})
+    else:
+        nome = salvo.get("nome") or email.split("@")[0]
+
+    session.update(perfil=perfil, email=email, nome=nome, empresa=nome)
+    destino = url_for("project_bp.aluno_inicio" if perfil == "aluno" else "feed")
+    return jsonify(ok=True, redirect=destino)
+
 
 @app.route("/sobre")
 def sobre():
