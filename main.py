@@ -1,10 +1,18 @@
-import os, json, re, uuid
+import os, sys, json, re, uuid
 from functools import wraps
 from flask import (Flask, render_template, request, redirect, url_for,
                    session, jsonify, flash, abort)
 from werkzeug.security import generate_password_hash, check_password_hash
 from dotenv import load_dotenv
 from firebase_admin import auth as fb_auth
+
+# Força envio imediato de logs para o console do Render (evita logs engolidos pelo buffer)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(line_buffering=True)
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(line_buffering=True)
+
+print("=== INICIANDO APLICAÇÃO INVESTETEC ===", flush=True)
 
 load_dotenv()
 
@@ -281,4 +289,5 @@ def validar(p, enviar):
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    print(f"=== Servidor InvestEtec pronto e escutando na porta {port} ===", flush=True)
+    app.run(host="0.0.0.0", port=port, debug=False)
