@@ -109,7 +109,7 @@ def login():
 
 @app.route("/logout")
 def logout():
-    for k in ("perfil", "email", "nome", "empresa"):
+    for k in ("uid", "perfil", "email", "nome", "empresa"):
         session.pop(k, None)
     return redirect(url_for("login"))
 
@@ -141,40 +141,136 @@ def register():
             flash(erro, "erro")
             return redirect(url_for("register"))
 
+        try:
+            usuario_fb = fb_auth.create_user(email=email, password=senha, display_name=nome)
+        except fb_auth.EmailAlreadyExistsError:
+            flash("Já existe uma conta cadastrada com este e-mail.", "erro")
+            return redirect(url_for("register"))
+        except Exception as e:
+            print("Erro ao criar usuário no Firebase Auth:", e, flush=True)
+            flash("Não foi possível criar a conta. Tente novamente.", "erro")
+            return redirect(url_for("register"))
+
         user_repo.save({
+            "uid": usuario_fb.uid,
             "nome": nome,
             "email": email,
             "perfil": perfil,
-            "senha_hash": generate_password_hash(senha),
+            "provedor": "password",
         })
         flash("Cadastro realizado! Entre com seu e-mail e senha.", "sucesso")
         return redirect(url_for("login"))
     return render_template("login/register.html")
 
-@app.route("/auth/google", methods=["POST"])
-def auth_google():
-    dados = request.get_json(silent=True) or {}
-    perfil = dados.get("perfil")
-    if perfil not in ("aluno", "empresa"):
-        return jsonify(ok=False, erro="Escolha aluno ou empresa."), 400
-    try:
-        info = fb_auth.verify_id_token(dados.get("idToken", ""), clock_skew_seconds=10)
-    except Exception as e:
-        print("Erro token Google:", e)
-        return jsonify(ok=False, erro="Não foi possível validar o login do Google."), 401
 
-    email = (info.get("email") or "").lower()
-    if not email or not info.get("email_verified"):
+def _autenticar_via_firebase(dados, forcar_google=False):
+    perfil = dados.get("perfil")
+    acao = dados.get("acao", "login")
+    if perfil not in ("aluno", "empresa"):
+        return jsonify(ok=False, erro="Escolha se você é aluno ou investidor."), 400
+
+    id_token = dados.get("idToken", "")
+    if not id_token:
+        return jsonify(ok=False, erro="Token de autenticação ausente."), 400
+
+    try:
+        info = fb_auth.verify_id_token(id_token, clock_skew_seconds=10)
+    except Exception as e:
+        print("Erro token Firebase:", e, flush=True)
+        return jsonify(ok=False, erro="Não foi possível validar a autenticação no Firebase."), 401
+
+    uid = info.get("uid")
+    email = (info.get("email") or "").strip().lower()
+    provedor = (info.get("firebase") or {}).get("sign_in_provider", "password")
+
+    if not email:
+        return jsonify(ok=False, erro="E-mail não encontrado na conta autenticada."), 400
+
+    if (forcar_google or provedor == "google.com") and not info.get("email_verified"):
         return jsonify(ok=False, erro="E-mail do Google não verificado."), 400
 
     salvo = user_repo.get_by_email(email, perfil)
-    if not salvo:
-        nome = info.get("name") or email.split("@")[0]
-        user_repo.save({"nome": nome, "email": email, "perfil": perfil, "provedor": "google"})
-    else:
-        nome = salvo.get("nome") or email.split("@")[0]
 
-    session.update(perfil=perfil, email=email, nome=nome, empresa=nome)
+    # No login com e-mail/senha, avisa se a conta existir apenas no outro perfil
+    if acao == "login" and provedor != "google.com" and not salvo:
+        outro_perfil = "empresa" if perfil == "aluno" else "aluno"
+        outro = user_repo.get_by_email(email, outro_perfil)
+        if outro:
+            rotulo = "Aluno / Estagiário" if outro_perfil == "aluno" else "Investidor / Empresa"
+            return jsonify(
+                ok=False,
+                erro=f"Esta conta está cadastrada como {rotulo}. Selecione esse perfil para entrar."
+            ), 403
+
+    if not salvo:
+        nome = (dados.get("nome") or info.get("name") or email.split("@")[0]).strip()
+        novo_usuario = {
+            "uid": uid,
+            "nome": nome,
+            "email": email,
+            "perfil": perfil,
+            "provedor": "google" if provedor == "google.com" else "password",
+        }
+        if info.get("picture"):
+            novo_usuario["foto"] = info["picture"]
+        user_repo.save(novo_usuario)
+    else:
+        nome = salvo.get("nome") or info.get("name") or email.split("@")[0]
+        if uid and not salvo.get("uid"):
+            salvo["uid"] = uid
+            user_repo.save(salvo)
+
+    session.update(uid=uid, perfil=perfil, email=email, nome=nome, empresa=nome)
+    destino = url_for("project_bp.aluno_inicio" if perfil == "aluno" else "feed")
+    return jsonify(ok=True, redirect=destino)
+
+
+@app.route("/auth/firebase", methods=["POST"])
+def auth_firebase():
+    dados = request.get_json(silent=True) or {}
+    return _autenticar_via_firebase(dados, forcar_google=False)
+
+
+@app.route("/auth/google", methods=["POST"])
+def auth_google():
+    dados = request.get_json(silent=True) or {}
+    return _autenticar_via_firebase(dados, forcar_google=True)
+
+
+@app.route("/auth/legacy-login", methods=["POST"])
+def auth_legacy_login():
+    """Fallback para migrar automaticamente contas antigas (Firestore) para o Firebase Auth."""
+    dados = request.get_json(silent=True) or {}
+    perfil = dados.get("perfil")
+    email = (dados.get("email") or "").strip().lower()
+    senha = dados.get("senha") or ""
+
+    if perfil not in ("aluno", "empresa") or not email or not senha:
+        return jsonify(ok=False), 400
+
+    salvo = user_repo.get_by_email(email, perfil)
+    if not salvo or not salvo.get("senha_hash") or not check_password_hash(salvo["senha_hash"], senha):
+        return jsonify(ok=False), 401
+
+    nome = salvo.get("nome") or email.split("@")[0].replace(".", " ").title()
+    uid = salvo.get("uid")
+    try:
+        usuario_fb = fb_auth.create_user(email=email, password=senha, display_name=nome)
+        uid = usuario_fb.uid
+    except fb_auth.EmailAlreadyExistsError:
+        try:
+            uid = fb_auth.get_user_by_email(email).uid
+        except Exception:
+            pass
+    except Exception as e:
+        print("Aviso ao migrar usuário legado para Firebase Auth:", e, flush=True)
+
+    if uid:
+        salvo["uid"] = uid
+        salvo["provedor"] = "password"
+        user_repo.save(salvo)
+
+    session.update(uid=uid, perfil=perfil, email=email, nome=nome, empresa=nome)
     destino = url_for("project_bp.aluno_inicio" if perfil == "aluno" else "feed")
     return jsonify(ok=True, redirect=destino)
 

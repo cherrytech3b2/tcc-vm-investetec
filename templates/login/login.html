@@ -90,59 +90,77 @@
           </div>
 
           <h4>Bem-vindo!</h4>
-          <p class="subtitle">Faça login para continuar</p>
+          <p class="subtitle">Escolha seu perfil e faça login para continuar</p>
 
-          <form action="/login" method="POST">
-                      {% with mensagens = get_flashed_messages(with_categories=true) %}
-            {% for categoria, texto in mensagens %}
-              <div style="padding:10px 14px;margin-bottom:12px;border-radius:8px;font-size:14px;{{ 'background:#e6f7ec;color:#1a7f3c;' if categoria == 'sucesso' else 'background:#fdecea;color:#b3261e;' }}">{{ texto }}</div>
-            {% endfor %}
-          {% endwith %}
+          <div class="role-select" role="group" aria-label="Tipo de perfil">
+            <button type="button" class="role-option active" id="role-aluno" data-perfil="aluno">
+              <i class="bi bi-mortarboard-fill"></i>
+              <span>Aluno / Estagiário</span>
+            </button>
+            <button type="button" class="role-option" id="role-empresa" data-perfil="empresa">
+              <i class="bi bi-briefcase-fill"></i>
+              <span>Investidor</span>
+            </button>
+          </div>
+
+          <form id="login-form" action="/login" method="POST" novalidate>
+            <input type="hidden" name="perfil" id="perfil" value="aluno">
+
+            {% with mensagens = get_flashed_messages(with_categories=true) %}
+              {% for categoria, texto in mensagens %}
+                <div class="auth-alert {{ 'auth-alert--sucesso' if categoria == 'sucesso' else 'auth-alert--erro' }}">{{ texto }}</div>
+              {% endfor %}
+            {% endwith %}
+            <div id="auth-feedback" class="auth-alert" hidden></div>
+
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
               <div class="input-wrapper">
                 <i class="bi bi-envelope"></i>
-                <input type="email" class="form-control" id="email" name="email" placeholder="seu@gmail.com" required>
+                <input type="email" class="form-control" id="email" name="email" placeholder="seu@gmail.com" autocomplete="email" required>
               </div>
             </div>
 
-            <div class="mb-3">
-              <label for="senha" class="form-label">Senha</label>
+            <div class="mb-2">
+              <div class="forgot-row">
+                <label for="senha" class="form-label mb-0">Senha</label>
+                <button type="button" id="btn-esqueci" class="forgot-link">Esqueci minha senha</button>
+              </div>
               <div class="input-wrapper">
                 <i class="bi bi-lock"></i>
-                <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha"
-                  required>
+                <input type="password" class="form-control" id="senha" name="senha" placeholder="Digite sua senha" autocomplete="current-password" required>
               </div>
             </div>
-            <button type="submit" name="perfil" value="aluno" class="btn btn-primary w-100 mb-2">
-              <i class="bi bi-mortarboard-fill"></i> Entrar como Aluno / Estagiário
+
+            <button type="submit" id="btn-entrar" class="btn btn-primary w-100">
+              <i class="bi bi-box-arrow-in-right"></i> Entrar
             </button>
-            <button type="submit" name="perfil" value="empresa" class="btn btn-perfil-invest w-100">
-              <i class="bi bi-briefcase-fill"></i> Entrar como Investidor / Interessado
-            </button>
+          </form>
 
-            <!-- e cole este <style> antes de </head> -->
-            <style>
-              .btn-perfil-invest {
-                background: #fff;
-                color: #f95400;
-                border: 2px solid #f95400;
-                font-weight: 700;
-                border-radius: 14px;
-                padding: 10px
-              }
+          <div class="divider">
+            <hr>
+            <span>ou entre com</span>
+            <hr>
+          </div>
 
-              .btn-perfil-invest:hover {
-                background: #fff0e6;
-                color: #e04b00;
-                border-color: #e04b00
-              }
-            </style>
+          <button type="button" id="btn-google" class="btn-google">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="#4285F4"
+                d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.47c-.28 1.5-1.13 2.78-2.4 3.63v3.02h3.88c2.27-2.09 3.57-5.17 3.57-8.84z" />
+              <path fill="#34A853"
+                d="M12 24c3.24 0 5.95-1.07 7.93-2.9l-3.88-3.02c-1.08.72-2.45 1.15-4.05 1.15-3.12 0-5.76-2.1-6.7-4.93H1.3v3.11C3.27 21.3 7.31 24 12 24z" />
+              <path fill="#FBBC05"
+                d="M5.3 14.3c-.24-.72-.38-1.49-.38-2.3s.14-1.58.38-2.3V6.59H1.3A11.98 11.98 0 000 12c0 1.93.46 3.76 1.3 5.41l4-3.11z" />
+              <path fill="#EA4335"
+                d="M12 4.77c1.76 0 3.34.6 4.58 1.79l3.44-3.44C17.94 1.19 15.24 0 12 0 7.31 0 3.27 2.7 1.3 6.59l4 3.11c.94-2.83 3.58-4.93 6.7-4.93z" />
+            </svg>
+            Continuar com Google
+          </button>
 
-            <div class="register-text">
-              Não tem uma conta?
-              <a href="{{ url_for('register') }}">Criar conta</a>
-            </div>
+          <div class="register-text">
+            Não tem uma conta?
+            <a href="{{ url_for('register') }}">Criar conta</a>
+          </div>
 
         </div>
       </div>
@@ -155,6 +173,102 @@
   <div class="background-grid"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module">
+    import {
+      loginComEmailSenha,
+      entrarComGoogle,
+      enviarRedefinicaoSenha,
+    } from "{{ url_for('static', filename='js/firebase_auth.js') }}";
+
+    const perfilInput = document.getElementById("perfil");
+    const roleBtns = document.querySelectorAll(".role-option");
+    const form = document.getElementById("login-form");
+    const emailInput = document.getElementById("email");
+    const senhaInput = document.getElementById("senha");
+    const btnEntrar = document.getElementById("btn-entrar");
+    const btnGoogle = document.getElementById("btn-google");
+    const btnEsqueci = document.getElementById("btn-esqueci");
+    const feedback = document.getElementById("auth-feedback");
+
+    function mostrarMensagem(texto, tipo = "erro") {
+      feedback.textContent = texto;
+      feedback.className = `auth-alert auth-alert--${tipo}`;
+      feedback.hidden = false;
+    }
+
+    function limparMensagem() {
+      feedback.hidden = true;
+      feedback.textContent = "";
+    }
+
+    function setCarregando(ativo) {
+      btnEntrar.disabled = ativo;
+      btnGoogle.disabled = ativo;
+      btnEntrar.innerHTML = ativo
+        ? '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Entrando...'
+        : '<i class="bi bi-box-arrow-in-right"></i> Entrar';
+    }
+
+    roleBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        roleBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        perfilInput.value = btn.dataset.perfil;
+        limparMensagem();
+      });
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      limparMensagem();
+
+      const email = emailInput.value.trim().toLowerCase();
+      const senha = senhaInput.value;
+      const perfil = perfilInput.value;
+
+      if (!email || !senha) {
+        mostrarMensagem("Informe seu e-mail e sua senha.");
+        return;
+      }
+
+      setCarregando(true);
+      try {
+        const res = await loginComEmailSenha(email, senha, perfil);
+        window.location.href = res.redirect;
+      } catch (err) {
+        mostrarMensagem(err.message || "E-mail ou senha incorretos.");
+        setCarregando(false);
+      }
+    });
+
+    btnGoogle.addEventListener("click", async () => {
+      limparMensagem();
+      setCarregando(true);
+      try {
+        const res = await entrarComGoogle(perfilInput.value);
+        window.location.href = res.redirect;
+      } catch (err) {
+        mostrarMensagem(err.message || "Não foi possível entrar com o Google.");
+        setCarregando(false);
+      }
+    });
+
+    btnEsqueci.addEventListener("click", async () => {
+      limparMensagem();
+      const email = emailInput.value.trim().toLowerCase();
+      if (!email) {
+        mostrarMensagem("Digite seu e-mail acima para receber o link de redefinição de senha.");
+        emailInput.focus();
+        return;
+      }
+      try {
+        await enviarRedefinicaoSenha(email);
+        mostrarMensagem("Enviamos um link de redefinição de senha para o seu e-mail.", "sucesso");
+      } catch (err) {
+        mostrarMensagem(err.message || "Não foi possível enviar o e-mail de redefinição.");
+      }
+    });
+  </script>
 
 </body>
 

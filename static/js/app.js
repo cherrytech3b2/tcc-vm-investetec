@@ -10,14 +10,13 @@
     clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('toast--visivel'), 2400);
   }
 
-  /* ---------- filtros ---------- */
   const busca = $('#busca'), fc = $('#f-curso'), fn = $('#f-nivel'), ft = $('#f-tipo');
   function filtrar() {
     const q = (busca?.value || '').toLowerCase().trim(); let n = 0;
     const cards = $$('.card[data-id]');
     cards.forEach(c => {
       const ok = (!q || c.dataset.texto.includes(q)) && (!fc?.value || c.dataset.categoria === fc.value) &&
-                 (!fn?.value || c.dataset.nivel === fn.value) && (!ft?.value || c.dataset.tipo === ft.value);
+        (!fn?.value || c.dataset.nivel === fn.value) && (!ft?.value || c.dataset.tipo === ft.value);
       c.hidden = !ok; if (ok) n++;
     });
     $('#n').textContent = n;
@@ -26,7 +25,6 @@
   [busca, fc, fn, ft].forEach(e => e && e.addEventListener('input', filtrar));
   $('#limpar')?.addEventListener('click', () => { [busca, fc, fn, ft].forEach(e => e && (e.value = '')); filtrar(); });
 
-  /* ---------- modal ---------- */
   const sec = (k, t, ic, corpo) => corpo ? `<section class="detail-section"><div class="detail-section__heading"><span><i class="bi ${ic}"></i></span><div><small>${k}</small><h3>${t}</h3></div></div>${corpo}</section>` : '';
   const lista = (cls, itens) => itens?.length ? `<div class="${cls}">${itens.map(i => `<span>${esc(i)}</span>`).join('')}</div>` : '';
 
@@ -62,7 +60,6 @@
     $('#modal video')?.pause();
   }
 
-  /* ---------- favoritos (só investidor) ---------- */
   async function alternar(id) {
     try {
       const r = await fetch('/api/favorito/' + id, { method: 'POST' });

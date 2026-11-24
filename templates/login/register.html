@@ -135,13 +135,14 @@
           </div>
         </div>
 
-                <form action="/register" method="POST">
+                <form id="register-form" action="/register" method="POST" novalidate>
           <input type="hidden" name="perfil" id="perfil" value="aluno">
           {% with mensagens = get_flashed_messages(with_categories=true) %}
             {% for categoria, texto in mensagens %}
               <div style="padding:10px 14px;margin-bottom:12px;border-radius:8px;font-size:14px;{{ 'background:#e6f7ec;color:#1a7f3c;' if categoria == 'sucesso' else 'background:#fdecea;color:#b3261e;' }}">{{ texto }}</div>
             {% endfor %}
           {% endwith %}
+          <div id="auth-feedback" hidden style="padding:10px 14px;margin-bottom:12px;border-radius:8px;font-size:14px;"></div>
           <div class="field">
             <label for="nome">Nome completo</label>
 
@@ -183,7 +184,7 @@
             <a href="#">Política de Privacidade</a>
           </div>
 
-          <button type="submit" class="btn-primary">
+          <button type="submit" id="btn-registrar" class="btn-primary">
             Criar conta
             <i class="bi bi-arrow-right"></i>
           </button>
@@ -231,38 +232,85 @@ document.getElementById('role-empresa').addEventListener('click', function () {
 });
   </script>
   <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import {
+      cadastrarComEmailSenha,
+      entrarComGoogle,
+    } from "{{ url_for('static', filename='js/firebase_auth.js') }}";
 
-  const app = initializeApp({
-    apiKey: "AIzaSyCY-xerBTuvjSVkbUzKzyRcyMK5KhYjD3k",
-    authDomain: "tcc-dados-deborah.firebaseapp.com",
-    projectId: "tcc-dados-deborah",
-    appId: "1:401610918602:web:25beeb2ea3c326802d0233"
-  });
-  const auth = getAuth(app);
+    const form = document.getElementById("register-form");
+    const perfilInput = document.getElementById("perfil");
+    const nomeInput = document.getElementById("nome");
+    const emailInput = document.getElementById("email");
+    const senhaInput = document.getElementById("senha");
+    const confirmaInput = document.getElementById("confirmar-senha");
+    const btnRegistrar = document.getElementById("btn-registrar");
+    const btnGoogle = document.getElementById("btn-google");
+    const feedback = document.getElementById("auth-feedback");
 
-  document.getElementById('btn-google').addEventListener('click', async () => {
-    try {
-      const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' });
-      const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken();
-      const perfil = document.getElementById('perfil').value;
-      const r = await fetch('/auth/google', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken, perfil })
-      });
-      const d = await r.json();
-      if (d.ok) window.location = d.redirect;
-      else alert(d.erro || 'Não foi possível entrar com o Google.');
-    } catch (e) {
-      console.error(e);
-      alert('Login com Google cancelado ou falhou.');
+    function mostrarMensagem(texto, tipo = "erro") {
+      feedback.textContent = texto;
+      feedback.style.background = tipo === "sucesso" ? "#e6f7ec" : "#fdecea";
+      feedback.style.color = tipo === "sucesso" ? "#1a7f3c" : "#b3261e";
+      feedback.hidden = false;
     }
-  });
-</script>
+
+    function setCarregando(ativo) {
+      btnRegistrar.disabled = ativo;
+      btnGoogle.disabled = ativo;
+      btnRegistrar.innerHTML = ativo
+        ? 'Criando conta...'
+        : 'Criar conta <i class="bi bi-arrow-right"></i>';
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      feedback.hidden = true;
+
+      const nome = nomeInput.value.trim();
+      const email = emailInput.value.trim().toLowerCase();
+      const senha = senhaInput.value;
+      const confirma = confirmaInput.value;
+      const perfil = perfilInput.value;
+
+      if (!nome) {
+        mostrarMensagem("Informe seu nome completo.");
+        return;
+      }
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+        mostrarMensagem("E-mail inválido.");
+        return;
+      }
+      if (senha.length < 6) {
+        mostrarMensagem("A senha deve ter pelo menos 6 caracteres.");
+        return;
+      }
+      if (senha !== confirma) {
+        mostrarMensagem("As senhas não conferem.");
+        return;
+      }
+
+      setCarregando(true);
+      try {
+        const res = await cadastrarComEmailSenha(nome, email, senha, perfil);
+        window.location.href = res.redirect;
+      } catch (err) {
+        mostrarMensagem(err.message || "Não foi possível criar a conta.");
+        setCarregando(false);
+      }
+    });
+
+    btnGoogle.addEventListener("click", async () => {
+      feedback.hidden = true;
+      setCarregando(true);
+      try {
+        const res = await entrarComGoogle(perfilInput.value);
+        window.location.href = res.redirect;
+      } catch (err) {
+        mostrarMensagem(err.message || "Não foi possível entrar com o Google.");
+        setCarregando(false);
+      }
+    });
+  </script>
 </body>
 
 </html>
