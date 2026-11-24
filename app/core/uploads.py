@@ -1,14 +1,28 @@
 import os
-import cloudinary
-import cloudinary.uploader
+from urllib.parse import urlparse
 from dotenv import load_dotenv
 
 load_dotenv()
 
+import cloudinary
+import cloudinary.uploader
+
+_cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME")
+_api_key = os.environ.get("CLOUDINARY_API_KEY")
+_api_secret = os.environ.get("CLOUDINARY_API_SECRET")
+
+if not (_cloud_name and _api_key and _api_secret):
+    _url = os.environ.get("CLOUDINARY_URL")
+    if _url:
+        _parsed = urlparse(_url)
+        _cloud_name = _cloud_name or _parsed.hostname
+        _api_key = _api_key or _parsed.username
+        _api_secret = _api_secret or _parsed.password
+
 cloudinary.config(
-    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.environ.get("CLOUDINARY_API_KEY"),
-    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
+    cloud_name=_cloud_name,
+    api_key=_api_key,
+    api_secret=_api_secret,
     secure=True,
 )
 
