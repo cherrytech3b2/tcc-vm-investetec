@@ -59,7 +59,7 @@ def validar(p, form, files, enviar):
     v = files.get("video")
     if v and v.filename:
         if not ext_ok(v, EXT_VID): e["video"] = "Use MP4, WEBM ou MOV."
-        elif tamanho(v) > MAX_VID: e["video"] = "O vídeo deve ter até 100 MB."
+        elif tamanho(v) > MAX_VID: e["video"] = "O vídeo deve ter até 15 MB."
     email, tel = f.get("contato_email", "").strip(), re.sub(r"\D", "", f.get("contato_telefone", ""))
     if email and not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email): e["contato_email"] = "E-mail inválido."
     if tel and len(tel) not in (10, 11): e["contato_telefone"] = "Telefone inválido. Use DDD + número."
