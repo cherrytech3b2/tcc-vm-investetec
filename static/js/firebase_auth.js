@@ -116,7 +116,7 @@ export async function loginComEmailSenha(email, senha, perfil) {
   }
 }
 
-export async function cadastrarComEmailSenha(nome, email, senha, perfil) {
+export async function cadastrarComEmailSenha(nome, email, senha, perfil, acceptedTerms = true) {
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, senha);
     await updateProfile(cred.user, { displayName: nome }).catch(() => {});
@@ -126,6 +126,7 @@ export async function cadastrarComEmailSenha(nome, email, senha, perfil) {
         idToken,
         perfil,
         nome,
+        accepted_terms: Boolean(acceptedTerms),
         acao: "register",
       });
     } catch (backendErr) {
@@ -140,7 +141,7 @@ export async function cadastrarComEmailSenha(nome, email, senha, perfil) {
   }
 }
 
-export async function entrarComGoogle(perfil) {
+export async function entrarComGoogle(perfil, acceptedTerms = true) {
   try {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
@@ -150,6 +151,7 @@ export async function entrarComGoogle(perfil) {
       return await enviarSessaoBackend("/auth/google", {
         idToken,
         perfil,
+        accepted_terms: Boolean(acceptedTerms),
         acao: "google",
       });
     } catch (backendErr) {

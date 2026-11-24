@@ -16,7 +16,8 @@
     {% for p in projetos %}
     <article class="card">
       <div class="card__thumb">
-        {% if p.imagem %}<img src="{{ p.imagem }}" alt="Foto principal de {{ p.titulo }}">{% endif %}
+        {% set capa_thumb = p.thumbnail or p.imagem or p.foto_1 %}
+        {% if capa_thumb %}<img src="{{ capa_thumb }}" loading="lazy" alt="Thumbnail do projeto {{ p.titulo }}">{% else %}<span class="card__thumb-ph"><i class="bi bi-image"></i></span>{% endif %}
         <span class="card__thumb-label">{{ p.status|upper }}</span>
       </div>
       <div class="card__body">

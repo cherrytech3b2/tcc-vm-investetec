@@ -1,11 +1,3 @@
-from dataclass import dataclass
-from datatime import datetime
+from app.domain.entities import User
 
-@dataclass
-class User:
-    uid: str
-    nome:str
-    email:str
-    created_at: str = None
-    update_at: str = None 
-    datatime = field(default_factory=datatime.utcnow)
+__all__ = ["User"]

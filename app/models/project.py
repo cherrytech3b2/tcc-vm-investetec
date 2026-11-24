@@ -1,18 +1,3 @@
-from dataclasses import dataclass
+from app.domain.entities import Project
 
-@dataclass
-class Project:
-    id: str
-    name: str
-    description: str
-    course: str
-    status: str
-    has_interest: bool
-    is_favorite: bool
-    full_name: str
-    email: str
-    password: str
-    account_type: str
-    accepted_terms: bool
-        
-  
+__all__ = ["Project"]

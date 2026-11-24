@@ -39,7 +39,7 @@
       {% block busca %}{% endblock %}
       <a href="{{ url_for('user_bp.perfil') }}" class="topbar__user" aria-label="Abrir meu perfil">
         <div class="topbar__user-text"><strong>{{ session.nome }}</strong><span>{{ 'Aluno' if session.perfil == 'aluno' else 'Investidor' }}</span></div>
-        <div class="topbar__avatar">{% if eu.foto %}<img src="{{ eu.foto }}" alt="">{% else %}{{ session.nome[:2]|upper }}{% endif %}</div>
+        <div class="topbar__avatar">{% if eu.foto_thumbnail or eu.foto %}<img src="{{ eu.foto_thumbnail or eu.foto }}" alt="">{% else %}{{ session.nome[:2]|upper }}{% endif %}</div>
       </a>
     </header>
     {% for cat, m in get_flashed_messages(with_categories=true) %}

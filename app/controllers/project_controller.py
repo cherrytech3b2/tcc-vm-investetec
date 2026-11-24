@@ -3,7 +3,7 @@ import uuid
 import re
 from app.repositories.firebase_repository import ProjectRepository
 from app.services.project_service import ProjectService
-from app.core.uploads import enviar_arquivo
+from app.core.uploads import enviar_arquivo, sincronizar_midias_projeto
 
 project_bp = Blueprint('project_bp', __name__)
 project_repo = ProjectRepository()
@@ -19,7 +19,7 @@ def check_aluno():
 @project_bp.route("/aluno/inicio")
 def aluno_inicio():
     check_aluno()
-    meus = project_repo.get_by_owner(session["email"])
+    meus = project_repo.get_by_owner(session["email"], session.get("uid"))
     return render_template("aluno/aluno_inicio.html", projetos=meus)
 
 @project_bp.route("/aluno/novo", methods=["GET", "POST"])
@@ -29,7 +29,13 @@ def aluno_form(pid=None):
     novo = pid is None
     
     if novo:
-        p = {"owner_email": session["email"], "owner": session["email"], "status": "Rascunho", "tipo": "Individual"}
+        p = {
+            "owner_email": session["email"],
+            "owner": session["email"],
+            "owner_uid": session.get("uid"),
+            "status": "Rascunho",
+            "tipo": "Individual",
+        }
     else:
         p = project_repo.get_by_id(pid)
         if not p or p.get("owner_email", p.get("owner")) != session["email"]:
@@ -46,6 +52,10 @@ def aluno_form(pid=None):
                   "contato_email", "contato_telefone"):
             p[c] = f.get(c, "").strip()
             
+        p["owner_email"] = session["email"]
+        p["owner"] = session["email"]
+        if session.get("uid"):
+            p["owner_uid"] = session["uid"]
         p["curso"] = p.get("categoria", "")
         p["integrado"] = p.get("tipo") == "Integrado"
         p["cursos_integrados"] = f.getlist("cursos_integrados") if p["integrado"] else [p["categoria"]]
@@ -56,9 +66,13 @@ def aluno_form(pid=None):
             url, erro = enviar_arquivo(request.files.get(nome_form), tipo)
             if url:
                 p[campo] = url
+                if campo == "video":
+                    p["video_thumbnail"] = None  # força regenerar thumbnail do novo vídeo
             if erro:
                 erros_upload[nome_form] = erro
- 
+
+        sincronizar_midias_projeto(p)
+
         if erros_upload:
             flash("Verifique os arquivos enviados.", "erro")
             return render_template("aluno/aluno_form.html", p=p, erros=erros_upload, cursos=CURSOS, niveis=NIVEIS)

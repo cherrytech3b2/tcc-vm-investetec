@@ -129,7 +129,7 @@
             </div>
 
             <div>
-              <strong>Empresa</strong>
+              <strong>Investidor / Empresa</strong>
               <span>quero encontrar talentos</span>
             </div>
           </div>
@@ -180,8 +180,10 @@
           </div>
 
           <div class="terms">
-            Eu aceito os <a href="#">Termos de Uso</a> e a
-            <a href="#">Política de Privacidade</a>
+            <label style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="aceitar-termos" name="accepted_terms" value="1" checked style="margin-top:2px;accent-color:#f95400;">
+              <span>Eu aceito os <a href="#">Termos de Uso</a> e a <a href="#">Política de Privacidade</a></span>
+            </label>
           </div>
 
           <button type="submit" id="btn-registrar" class="btn-primary">
@@ -243,6 +245,7 @@ document.getElementById('role-empresa').addEventListener('click', function () {
     const emailInput = document.getElementById("email");
     const senhaInput = document.getElementById("senha");
     const confirmaInput = document.getElementById("confirmar-senha");
+    const termosInput = document.getElementById("aceitar-termos");
     const btnRegistrar = document.getElementById("btn-registrar");
     const btnGoogle = document.getElementById("btn-google");
     const feedback = document.getElementById("auth-feedback");
@@ -271,6 +274,7 @@ document.getElementById('role-empresa').addEventListener('click', function () {
       const senha = senhaInput.value;
       const confirma = confirmaInput.value;
       const perfil = perfilInput.value;
+      const aceitouTermos = termosInput ? termosInput.checked : true;
 
       if (!nome) {
         mostrarMensagem("Informe seu nome completo.");
@@ -288,10 +292,14 @@ document.getElementById('role-empresa').addEventListener('click', function () {
         mostrarMensagem("As senhas não conferem.");
         return;
       }
+      if (!aceitouTermos) {
+        mostrarMensagem("Você precisa aceitar os Termos de Uso e a Política de Privacidade.");
+        return;
+      }
 
       setCarregando(true);
       try {
-        const res = await cadastrarComEmailSenha(nome, email, senha, perfil);
+        const res = await cadastrarComEmailSenha(nome, email, senha, perfil, aceitouTermos);
         window.location.href = res.redirect;
       } catch (err) {
         mostrarMensagem(err.message || "Não foi possível criar a conta.");
@@ -301,9 +309,14 @@ document.getElementById('role-empresa').addEventListener('click', function () {
 
     btnGoogle.addEventListener("click", async () => {
       feedback.hidden = true;
+      const aceitouTermos = termosInput ? termosInput.checked : true;
+      if (!aceitouTermos) {
+        mostrarMensagem("Você precisa aceitar os Termos de Uso e a Política de Privacidade.");
+        return;
+      }
       setCarregando(true);
       try {
-        const res = await entrarComGoogle(perfilInput.value);
+        const res = await entrarComGoogle(perfilInput.value, aceitouTermos);
         window.location.href = res.redirect;
       } catch (err) {
         mostrarMensagem(err.message || "Não foi possível entrar com o Google.");

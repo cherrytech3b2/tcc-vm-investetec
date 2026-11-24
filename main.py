@@ -35,6 +35,8 @@ PROJETOS = []  # sem projetos fictícios: tudo vem do cadastro dos alunos
 
 
 from app.repositories.firebase_repository import UserRepository, ProjectRepository
+from app.core.uploads import sincronizar_midias_projeto, gerar_thumbnail_imagem
+from app.domain.entities import User
 
 user_repo = UserRepository()
 project_repo = ProjectRepository()
@@ -54,9 +56,10 @@ def disponiveis():
 
 def publico(p):
     """Versão do projeto que pode ir para a tela (sem dados internos)."""
-    d = {k: v for k, v in p.items() if k not in ("owner", "autoriza", "status")}
+    d = {k: v for k, v in p.items() if k not in ("owner", "owner_uid", "autoriza", "status")}
+    sincronizar_midias_projeto(d)
     d["integrantes_lista"] = [l.strip() for l in (p.get("integrantes") or "").splitlines() if l.strip()]
-    d["meu"] = p.get("owner") == session.get("email")
+    d["meu"] = p.get("owner_email", p.get("owner")) == session.get("email")
     return d
 
 
@@ -151,13 +154,16 @@ def register():
             flash("Não foi possível criar a conta. Tente novamente.", "erro")
             return redirect(url_for("register"))
 
-        user_repo.save({
-            "uid": usuario_fb.uid,
-            "nome": nome,
-            "email": email,
-            "perfil": perfil,
-            "provedor": "password",
-        })
+        user_repo.save(
+            User(
+                uid=usuario_fb.uid,
+                nome=nome,
+                email=email,
+                perfil=perfil,
+                provedor="password",
+                accepted_terms=bool(request.form.get("accepted_terms", True)),
+            ).to_dict()
+        )
         flash("Cadastro realizado! Entre com seu e-mail e senha.", "sucesso")
         return redirect(url_for("login"))
     return render_template("login/register.html")
@@ -204,20 +210,29 @@ def _autenticar_via_firebase(dados, forcar_google=False):
 
     if not salvo:
         nome = (dados.get("nome") or info.get("name") or email.split("@")[0]).strip()
-        novo_usuario = {
-            "uid": uid,
-            "nome": nome,
-            "email": email,
-            "perfil": perfil,
-            "provedor": "google" if provedor == "google.com" else "password",
-        }
-        if info.get("picture"):
-            novo_usuario["foto"] = info["picture"]
+        foto = info.get("picture")
+        novo_usuario = User(
+            uid=uid,
+            nome=nome,
+            email=email,
+            perfil=perfil,
+            provedor="google" if provedor == "google.com" else "password",
+            accepted_terms=bool(dados.get("accepted_terms", True)),
+            foto=foto,
+            foto_thumbnail=gerar_thumbnail_imagem(foto, 200, 200) if foto else None,
+        ).to_dict()
         user_repo.save(novo_usuario)
     else:
         nome = salvo.get("nome") or info.get("name") or email.split("@")[0]
+        atualizou = False
         if uid and not salvo.get("uid"):
             salvo["uid"] = uid
+            atualizou = True
+        if info.get("picture") and not salvo.get("foto"):
+            salvo["foto"] = info["picture"]
+            salvo["foto_thumbnail"] = gerar_thumbnail_imagem(info["picture"], 200, 200)
+            atualizou = True
+        if atualizou:
             user_repo.save(salvo)
 
     session.update(uid=uid, perfil=perfil, email=email, nome=nome, empresa=nome)

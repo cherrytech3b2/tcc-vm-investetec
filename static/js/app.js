@@ -29,10 +29,14 @@
   const lista = (cls, itens) => itens?.length ? `<div class="${cls}">${itens.map(i => `<span>${esc(i)}</span>`).join('')}</div>` : '';
 
   function modalHtml(p) {
-    const fotos = [p.foto_1, p.foto_2, p.foto_3].filter(Boolean), f = favs.has(p.id);
+    const fotos = (p.fotos && p.fotos.length) ? p.fotos : [p.foto_1, p.foto_2, p.foto_3].filter(Boolean);
+    const thumbs = (p.thumbnails && p.thumbnails.length) ? p.thumbnails : fotos;
+    const capa = p.imagem || p.foto_1 || p.thumbnail || fotos[0] || '';
+    const f = favs.has(p.id);
     const favBtn = modo === 'investidor' ? `<button class="modal__favorite" type="button" data-fav="${p.id}"><i class="bi ${f ? 'bi-heart-fill' : 'bi-heart'}"></i> <span>${f ? 'Favoritado' : 'Favoritar'}</span></button>` : '';
-    const galeria = fotos.length ? `<div class="galeria"><img class="galeria__principal" src="${esc(fotos[0])}" alt="Foto 1 de ${esc(p.titulo)}"><div class="galeria__secundarias">${fotos.slice(1).map((u, i) => `<img src="${esc(u)}" alt="Foto ${i + 2} de ${esc(p.titulo)}">`).join('')}</div></div>` : '';
-    const video = p.video ? `<div class="video-box"><div class="video-box__heading"><i class="bi bi-play-circle-fill"></i><div><strong>Vídeo de apresentação</strong><span>Veja o projeto em ação</span></div></div><video controls preload="metadata" src="${esc(p.video)}"></video></div>` : '';
+    const galeria = fotos.length ? `<div class="galeria"><img class="galeria__principal" id="galeria-principal" src="${esc(fotos[0])}" alt="Foto 1 de ${esc(p.titulo)}"><div class="galeria__secundarias">${fotos.map((u, i) => `<img src="${esc(thumbs[i] || u)}" data-foto-full="${esc(u)}" alt="Miniatura ${i + 1} de ${esc(p.titulo)}" style="cursor:pointer">`).join('')}</div></div>` : '';
+    const posterAttr = p.video_thumbnail ? ` poster="${esc(p.video_thumbnail)}"` : '';
+    const video = p.video ? `<div class="video-box"><div class="video-box__heading"><i class="bi bi-play-circle-fill"></i><div><strong>Vídeo de apresentação</strong><span>Veja o projeto em ação</span></div></div><video controls preload="metadata"${posterAttr} src="${esc(p.video)}"></video></div>` : '';
     const pitchItens = [['problema', 'Problema', 'bi-exclamation-triangle-fill'], ['solucao', 'Solução', 'bi-lightbulb-fill'], ['diferencial', 'Diferencial', 'bi-stars'], ['publico_alvo', 'Público-alvo', 'bi-people-fill'], ['potencial', 'Potencial', 'bi-graph-up-arrow']]
       .filter(([k]) => p[k]).map(([k, t, ic]) => `<div class="pitch__item ${k === 'potencial' ? 'pitch__item--full' : ''}"><i class="bi ${ic}"></i><strong>${t}</strong><p>${esc(p[k])}</p></div>`).join('');
     const pitch = pitchItens ? `<section class="pitch"><div class="pitch__heading"><span><i class="bi bi-rocket-takeoff-fill"></i></span><div><small>PITCH DO PROJETO</small><h3>Pitch de negócios</h3></div></div><div class="pitch__grid">${pitchItens}</div></section>` : '';
@@ -43,7 +47,7 @@
       (p.tecnologias?.length ? `<div class="info-box info-box--wide"><span>Tecnologias</span>${lista('technology-list', p.tecnologias)}</div>` : '') + '</div>';
     const tel = (p.contato_telefone || '').replace(/\D/g, '');
     const contato = (p.contato_email || p.contato_telefone) ? `<div class="contact-box"><div class="contact-box__icon"><i class="bi bi-chat-heart-fill"></i></div><div class="contact-box__content"><span>CONTATO</span><h3>Entre em contato com os responsáveis</h3><div class="contact-box__actions">${p.contato_email ? `<a class="contact-link" href="mailto:${esc(p.contato_email)}"><i class="bi bi-envelope-fill"></i> ${esc(p.contato_email)}</a>` : ''}${tel ? `<a class="contact-link" href="tel:${tel}"><i class="bi bi-telephone-fill"></i> ${esc(p.contato_telefone)}</a>` : ''}</div></div></div>` : '';
-    return `<div class="modal__hero">${p.imagem ? `<img src="${esc(p.imagem)}" alt="Foto principal de ${esc(p.titulo)}">` : ''}<div class="modal__hero-overlay"></div>
+    return `<div class="modal__hero">${capa ? `<img src="${esc(capa)}" alt="Foto principal de ${esc(p.titulo)}">` : ''}<div class="modal__hero-overlay"></div>
       <div class="modal__hero-info"><span>${esc(p.categoria)}</span><h2>${esc(p.titulo)}</h2><p>${esc(p.descricao)}</p></div>${favBtn}</div>
       <div class="modal__body">${sec('SOBRE', 'Sobre o projeto', 'bi-info-circle-fill', p.descricao_completa ? `<p>${esc(p.descricao_completa)}</p>` : '')}
       ${sec('MÍDIAS', 'Fotos e vídeo', 'bi-images', galeria + video)}${pitch}${sec('DETALHES', 'Equipe e tecnologias', 'bi-people-fill', info)}${contato}</div>`;
@@ -80,6 +84,12 @@
   }
 
   document.addEventListener('click', e => {
+    const thumb = e.target.closest('[data-foto-full]');
+    if (thumb) {
+      const principal = $('#galeria-principal');
+      if (principal) principal.src = thumb.dataset.fotoFull;
+      return;
+    }
     const a = e.target.closest('[data-abrir]'); if (a) return abrir(a.dataset.abrir);
     if (e.target.closest('[data-fechar]')) return fechar();
     const f = e.target.closest('[data-fav]'); if (f) alternar(f.dataset.fav);

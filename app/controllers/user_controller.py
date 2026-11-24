@@ -3,6 +3,7 @@ import re
 import uuid
 import os
 from app.repositories.firebase_repository import UserRepository
+from app.core.uploads import enviar_arquivo, gerar_thumbnail_imagem
 
 user_bp = Blueprint('user_bp', __name__)
 user_repo = UserRepository()
@@ -37,6 +38,17 @@ def perfil():
             
         if d.get("curso") and d["curso"] not in CURSOS:
             erros["curso"] = "Selecione um curso da lista."
+
+        if f.get("remover_foto"):
+            d["foto"] = ""
+            d["foto_thumbnail"] = ""
+        else:
+            url_foto, erro_foto = enviar_arquivo(request.files.get("foto"), "foto", pasta="investetec/perfis")
+            if erro_foto:
+                erros["foto"] = erro_foto
+            elif url_foto:
+                d["foto"] = url_foto
+                d["foto_thumbnail"] = gerar_thumbnail_imagem(url_foto, 200, 200)
             
         if erros:
             flash("Não foi possível salvar. Verifique os campos destacados.", "erro")
@@ -44,6 +56,8 @@ def perfil():
             
         d["email"] = email
         d["perfil"] = perfil_str
+        if session.get("uid"):
+            d["uid"] = session["uid"]
         user_repo.save(d)
         
         session["nome"] = session["empresa"] = d["nome"]
